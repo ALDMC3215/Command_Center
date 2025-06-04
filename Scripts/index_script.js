@@ -111,7 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const img = document.createElement("img");
       // Using WordPress mShots service for screenshots. Adjust dimensions as needed.
       img.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(
-        siteUrl,
+
+      cardInfo.visitLink
       )}?w=300&h=180`;
       img.alt = `پیش‌نمایش ${cardInfo.title || "سایت"}`;
       // Styling for the image to fit the container
@@ -150,8 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const filteredData = allCardsData.filter((card) => {
         const categoryMatch =
           filterCategory === "All" || card.category === filterCategory;
-        const text =
-          `${card.title || ""} ${card.subtitle || ""} ${card.description || ""}`.toLowerCase();
+        const text = `${card.title || ""} ${card.subtitle || ""} ${
+          card.description || ""
+        }`.toLowerCase();
         const searchMatch = text.includes(searchQuery.toLowerCase());
         return categoryMatch && searchMatch;
       });
@@ -177,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const target = event.target;
       if (target.classList.contains("category-tab")) {
         const currentActiveTab = categoryTabs.querySelector(
-          ".category-tab.active",
+          ".category-tab.active"
         );
         if (currentActiveTab) {
           currentActiveTab.classList.remove("active");
@@ -201,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("data/cards-data.json");
       if (!response.ok) {
         throw new Error(
-          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`,
+          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`
         );
       }
       allCardsData = await response.json();
@@ -228,12 +230,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initializeApp();
 
-  // if (
-  //   typeof Scrollbar !== "undefined" &&
-  //   document.getElementById("smooth-wrapper")
-  // ) {
-  //   Scrollbar.init(document.getElementById("smooth-wrapper"), {
-  //     damping: 0.07,
-  //   });
-  // }
 });
