@@ -1,6 +1,7 @@
 :root {
   --primary: #ff6f3c;
   --primary-dark: #d64c1a;
+  --primary-rgb: 255, 111, 60;
   --background: #f7f9fc;
   --header-bg: #1e1e2f;
   --text: #333;

@@ -1,9 +1,23 @@
+/* ===== FONTS ===== */
+@font-face {
+  font-family: "Inter";
+  src: url("../Fonts/Inter-Regular-slnt=0.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../Fonts/Inter-Bold-slnt=0.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* ===== RESET & BASE ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Quicksand", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 html,
@@ -30,7 +44,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 60px;
-  background-color: var(--header-bg);
+  background: radial-gradient(circle at top left, var(--primary-dark), var(--header-bg));
   color: var(--text-light);
   height: 90px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -39,7 +53,7 @@ header {
   left: 0;
   width: 100%;
   z-index: 1000;
-  transition: height 0.3s, padding-top 0.3s, background-color 0.3s,
+  background: radial-gradient(circle at top left, var(--primary-dark), var(--header-bg));
     box-shadow 0.3s;
 }
 
@@ -47,7 +61,7 @@ header.header-scrolled {
   height: 70px;
   padding-top: 0;
   padding-bottom: 0;
-  background-color: var(--header-bg);
+  background: linear-gradient(135deg, var(--header-bg), var(--primary-dark));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -159,11 +173,13 @@ header.header-scrolled #title {
   font-size: 1rem;
   outline: none;
   width: 220px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .search-input:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
 }
 
 .category-tab {
@@ -287,12 +303,41 @@ main {
   font-size: 2.5rem;
   overflow: hidden;
   border-bottom: 1px solid var(--card-border);
+  position: relative;
 }
 .card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
+}
+.fav-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.fav-btn i {
+  pointer-events: none;
+}
+.fav-btn:hover {
+  background: var(--primary);
+}
+.fav-btn.active {
+  background: var(--primary);
+}
+.fav-btn.active i {
+  color: #fff;
 }
 .card:hover .card-image img {
   transform: scale(1.05);
@@ -325,6 +370,12 @@ main {
   line-height: 1.6;
   margin-top: auto;
   text-align: justify;
+}
+.card-content mark {
+  background: rgba(var(--primary-rgb, 255, 111, 60), 0.25);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 3px;
 }
 
 /* =================== BUTTONS =================== */
