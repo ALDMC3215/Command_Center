@@ -53,10 +53,7 @@ header {
   left: 0;
   width: 100%;
   z-index: 1000;
-  transition:
-    height 0.3s,
-    padding-top 0.3s,
-    background-color 0.3s,
+  background: radial-gradient(circle at top left, var(--primary-dark), var(--header-bg));
     box-shadow 0.3s;
 }
 
@@ -64,7 +61,7 @@ header.header-scrolled {
   height: 70px;
   padding-top: 0;
   padding-bottom: 0;
-  background: radial-gradient(circle at top left, var(--primary-dark), var(--header-bg));
+  background: linear-gradient(135deg, var(--header-bg), var(--primary-dark));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -75,9 +72,7 @@ header.header-scrolled {
 }
 #Logo {
   height: 60px;
-  transition:
-    height 0.3s,
-    transform 0.3s;
+  transition: height 0.3s, transform 0.3s;
 }
 header.header-scrolled #Logo {
   height: 50px;
@@ -161,9 +156,7 @@ header.header-scrolled #title {
   gap: 10px;
   background-color: var(--category-bg);
   border-bottom: 1px solid var(--category-border);
-  transition:
-    background-color 0.4s ease,
-    border-color 0.4s ease;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 #categoryTabs {
@@ -198,10 +191,7 @@ header.header-scrolled #title {
   font-weight: 600;
   color: var(--text);
   position: relative;
-  transition:
-    color 0.25s ease,
-    background-color 0.25s ease,
-    transform 0.2s ease;
+  transition: color 0.25s ease, background-color 0.25s ease, transform 0.2s ease;
   cursor: pointer;
   outline: none;
   white-space: nowrap;
@@ -292,17 +282,14 @@ main {
   overflow: hidden;
   width: 100%;
   min-height: 400px;
-  transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.4s ease,
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease,
     border-color 0.4s ease;
   cursor: default;
 }
 .card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 32px -6px
-    var(--card-glow-hover, rgba(var(--primary-rgb, 255, 111, 60), 0.35));
+  box-shadow: 0 12px 32px -6px var(--card-glow-hover, rgba(var(--primary-rgb, 255, 111, 60), 0.35));
   border-color: var(--primary);
 }
 

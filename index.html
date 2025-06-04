@@ -1,67 +1,64 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="Styles/Themes/theme-default.css"
-      id="theme-style"
-    />
+    <link rel="stylesheet" href="Styles/Themes/theme-default.css" id="theme-style" />
     <link rel="stylesheet" href="Styles/index_style.css" />
     <link rel="icon" href="Images/Icon.png" type="image/png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/smooth-scrollbar@8.7.4/dist/smooth-scrollbar.js"></script>
     <title>ALDMC HQ</title>
-  </head>
+</head>
 
-  <body>
+<body>
     <!-- ========== HEADER: OUTSIDE WRAPPER ========== -->
     <header>
-      <div class="Container_Left">
-        <img id="Logo" src="Images/Logo White.svg" alt="Logo" />
-        <h1 id="title">Command Center</h1>
-      </div>
-      <div class="Container_Right">
-        <nav>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="About.html">About</a></li>
-            <li><a href="Contact.html">Contact</a></li>
-            <li><a href="Login.html">Login</a></li>
-            <li>
-              <button id="toggle-theme" class="btn outline">
-                Toggle Theme
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
+        <div class="Container_Left">
+            <img id="Logo" src="Images/Logo White.svg" alt="Logo" />
+            <h1 id="title">Command Center</h1>
+        </div>
+        <div class="Container_Right">
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="About.html">About</a></li>
+                    <li><a href="Contact.html">Contact</a></li>
+                    <li><a href="Login.html">Login</a></li>
+                    <li>
+                        <button id="toggle-theme" class="btn outline">
+                            Toggle Theme
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </header>
+<!-- ========== WRAPPER: ALL SCROLLABLE CONTENT ========== -->
+<div id="smooth-wrapper">
+  <div class="category-bar">
+    <div id="categoryTabs"></div>
+    <input
+      type="text"
+      id="searchInput"
+      class="search-input"
+      placeholder="Search..."
+    />
+  </div>
 
-    <!-- ========== WRAPPER: ALL SCROLLABLE CONTENT ========== -->
-    <div id="smooth-wrapper">
-      <div class="category-bar">
-        <div id="categoryTabs"></div>
-        <input
-          type="text"
-          id="searchInput"
-          class="search-input"
-          placeholder="Search..."
-        />
-      </div>
-      <main>
-        <section class="grid-section">
-          <div class="card-grid" id="cardContainer"></div>
-        </section>
-      </main>
-      <div id="themeOverlay"></div>
-      <div id="themeMenu" class="theme-menu"></div>
-    </div>
+  <main>
+    <section class="grid-section">
+      <div class="card-grid" id="cardContainer"></div>
+    </section>
+  </main>
+
+  <div id="themeOverlay"></div>
+  <div id="themeMenu" class="theme-menu"></div>
+</div>
+
     <script src="data/cards-data.js"></script>
     <script src="Scripts/index_script.js"></script>
-  </body>
+</body>
+
 </html>

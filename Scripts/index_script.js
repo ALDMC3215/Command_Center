@@ -171,40 +171,58 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    const imageDiv = cardElement.querySelector(".card-image");
-    const favButton = cardElement.querySelector(".fav-btn");
+const imageDiv = cardElement.querySelector(".card-image");
+const favButton = cardElement.querySelector(".fav-btn");
 
-    favButton.addEventListener("click", () => {
-      if (favorites.has(cardInfo.url)) {
-        favorites.delete(cardInfo.url);
-        favButton.classList.remove("active");
-        favButton.querySelector("i").classList.replace("fas", "far");
-      } else {
-        favorites.add(cardInfo.url);
-        favButton.classList.add("active");
-        favButton.querySelector("i").classList.replace("far", "fas");
-      }
-      localStorage.setItem(
-        "favoriteCardsALDMC",
-        JSON.stringify(Array.from(favorites)),
-      );
-    });
-
-    /*
-     * Previous logic attempted to fetch a screenshot of the linked website
-     * using the service at s.wordpress.com/mshots. That code has been
-     * commented out so thumbnails no longer depend on external URLs.
-     */
-
-    const img = document.createElement("img");
-    img.dataset.src = "Images/Icon.png"; // static placeholder thumbnail
-    img.alt = cardInfo.title || "thumbnail";
-    imageDiv.innerHTML = "";
-    imageDiv.appendChild(img);
-    observer.observe(img);
-
-    return cardElement;
+favButton.addEventListener("click", () => {
+  if (favorites.has(cardInfo.url)) {
+    favorites.delete(cardInfo.url);
+    favButton.classList.remove("active");
+    favButton.querySelector("i").classList.replace("fas", "far");
+  } else {
+    favorites.add(cardInfo.url);
+    favButton.classList.add("active");
+    favButton.querySelector("i").classList.replace("far", "fas");
   }
+  localStorage.setItem(
+    "favoriteCardsALDMC",
+    JSON.stringify(Array.from(favorites)),
+  );
+});
+
+const siteUrl = cardInfo.visitLink || cardInfo.url;
+if (
+  siteUrl &&
+  (siteUrl.startsWith("http://") || siteUrl.startsWith("https://"))
+) {
+  const img = document.createElement("img");
+  img.dataset.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(siteUrl)}`;
+  img.alt = cardInfo.title || "thumbnail";
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "cover";
+
+  img.onerror = () => {
+    // fallback to icon
+    imageDiv.innerHTML = `<i class="${cardInfo.icon || "fas fa-link"} fa-3x"></i>`;
+  };
+
+  imageDiv.innerHTML = "";
+  imageDiv.appendChild(img);
+  observer.observe(img);
+} else if (cardInfo.icon) {
+  imageDiv.innerHTML = `<i class="${cardInfo.icon} fa-3x"></i>`;
+} else {
+  const img = document.createElement("img");
+  img.dataset.src = "Images/Icon.png";
+  img.alt = cardInfo.title || "thumbnail";
+  imageDiv.innerHTML = "";
+  imageDiv.appendChild(img);
+  observer.observe(img);
+}
+
+return cardElement;
+
 
   function renderCards(filterCategory = "All", searchQuery = "") {
     if (!cardContainer || !allCardsData) return;
@@ -215,18 +233,20 @@ document.addEventListener("DOMContentLoaded", () => {
       cardContainer.innerHTML = "";
       const fragment = document.createDocumentFragment();
 
-      let filteredData = allCardsData.filter((card) => {
-        const cardCat = card.category ? card.category.trim() : "General";
-        const categoryMatch =
-          filterCategory === "All" ||
-          (filterCategory === "Favorites"
-            ? favorites.has(card.url)
-            : cardCat === filterCategory);
-        const text =
-          `${card.title || ""} ${card.subtitle || ""} ${card.description || ""}`.toLowerCase();
-        const searchMatch = text.includes(searchQuery.toLowerCase());
-        return categoryMatch && searchMatch;
-      });
+let filteredData = allCardsData.filter((card) => {
+  const cardCat = card.category ? card.category.trim() : "General";
+  const categoryMatch =
+    filterCategory === "All" ||
+    (filterCategory === "Favorites"
+      ? favorites.has(card.url)
+      : cardCat === filterCategory);
+
+  const text = `${card.title || ""} ${card.subtitle || ""} ${card.description || ""}`.toLowerCase();
+  const searchMatch = text.includes(searchQuery.toLowerCase());
+
+  return categoryMatch && searchMatch;
+});
+
 
       if (filterCategory === "All") {
         filteredData = filteredData.sort((a, b) => {
@@ -257,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const target = event.target;
       if (target.classList.contains("category-tab")) {
         const currentActiveTab = categoryTabs.querySelector(
-          ".category-tab.active",
+          ".category-tab.active"
         );
         if (currentActiveTab) {
           currentActiveTab.classList.remove("active");
@@ -282,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("data/cards-data.json");
       if (!response.ok) {
         throw new Error(
-          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`,
+          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`
         );
       }
       allCardsData = await response.json();
@@ -314,12 +334,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initializeApp();
 
-  // if (
-  //   typeof Scrollbar !== "undefined" &&
-  //   document.getElementById("smooth-wrapper")
-  // ) {
-  //   Scrollbar.init(document.getElementById("smooth-wrapper"), {
-  //     damping: 0.07,
-  //   });
-  // }
 });
