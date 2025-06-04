@@ -5,16 +5,16 @@
   --background: #121212;
   --header-bg: #1e1e1e;
   --text: #e0e0e0;
-  --text-light: #999;
+  --text-light: #fff;
   --card-bg: #1c1c1c;
   --card-border: #2e2e2e;
   --card-image-bg: #292929;
   --dropdown-bg: #1f1f1f;
   --dropdown-text: #ccc;
-  --category-bg: #191b21; /* ← نزدیک به header-bg، کمی روشن‌تر برای contrast */
-  --category-border: #23252e; /* ← خط border خیلی subtle و خفن */
+  --category-bg: #191b21;
+  --category-border: #23252e;
   --card-glow: rgba(255, 111, 60, 0.11);
   --card-glow-hover: rgba(255, 170, 120, 0.42);
-  --gradient-start: #414345;
-  --gradient-end: #232526;
+  --gradient-start: var(--primary-dark);
+  --gradient-end: var(--header-bg);
 }

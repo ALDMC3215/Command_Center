@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // =================== CATEGORY BAR ===================
   function getUniqueCategories(cardData) {
-    const categories = new Set(["All"]);
+    const categories = new Set(["All", "Favorites"]);
     cardData.forEach((card) => {
       if (card.category) {
         categories.add(card.category.trim());
@@ -134,11 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderCategoryTabs(categories) {
     if (!categoryTabs) return;
     categoryTabs.innerHTML = "";
-    const allCats = [...categories];
-    if (favorites.size > 0 && !allCats.includes("Favorites")) {
-      allCats.unshift("Favorites");
-    }
-    allCats.forEach((category) => {
+    categories.forEach((category) => {
       const button = document.createElement("button");
       button.className = "category-tab";
       button.textContent = category;
@@ -175,11 +171,15 @@ document.addEventListener("DOMContentLoaded", () => {
           <a href="${cardInfo.url || '#'}" class="btn" target="_blank" rel="noopener noreferrer">
             <i class="fas fa-external-link-alt"></i> Open
           </a>
+          <button class="remove-btn">
+            <i class="fas fa-times"></i> Remove
+          </button>
         </div>
       </div>
     `;
 
     const favButton = cardElement.querySelector(".fav-btn");
+    const removeButton = cardElement.querySelector(".remove-btn");
 
     favButton.addEventListener("click", () => {
       if (favorites.has(cardInfo.url)) {
@@ -196,6 +196,14 @@ document.addEventListener("DOMContentLoaded", () => {
         JSON.stringify(Array.from(favorites))
       );
     });
+
+removeButton.addEventListener("click", () => {
+  allCardsData = allCardsData.filter((c) => c.url !== cardInfo.url);
+  localStorage.setItem("cardsDataALDMC", JSON.stringify(allCardsData));
+  renderCards(currentCategory, searchInput ? searchInput.value : "");
+  const categories = getUniqueCategories(allCardsData);
+  renderCategoryTabs(categories);
+});
 
 
 

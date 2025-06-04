@@ -79,6 +79,18 @@ header {
   height: 90px;
 }
 
+.categories-bar {
+  background-color: var(--category-bg);
+  border-bottom: 1px solid var(--category-border);
+  padding: 10px 60px;
+  display: flex;
+  overflow-x: auto;
+}
+#categoryTabs {
+  display: flex;
+  gap: 12px;
+}
+
 header.header-scrolled {
   height: 70px;
   padding-top: 0;
@@ -86,6 +98,7 @@ header.header-scrolled {
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
 
 .Container_Left {
   display: flex;
@@ -110,13 +123,13 @@ header.header-scrolled #Logo {
 header.header-scrolled #title {
   font-size: 1.8rem;
 }
-.Container_Right ul {
+.main-nav ul {
   list-style: none;
   display: flex;
   align-items: center;
   gap: 15px;
 }
-.Container_Right a {
+.main-nav a {
   color: var(--text-light);
   text-decoration: none;
   font-weight: 600;
@@ -129,7 +142,7 @@ header.header-scrolled #title {
   transition: color 0.3s;
 }
 
-.Container_Right a::before {
+.main-nav a::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -141,13 +154,19 @@ header.header-scrolled #title {
   transition: transform 0.3s;
 }
 
-.Container_Right a:hover::before {
+.main-nav a:hover::before {
   transform: scaleX(1);
 }
 
 
-.Container_Right a:hover {
+.main-nav a:hover {
   color: var(--primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 #toggle-theme {
   font-size: 0.8rem;
@@ -162,14 +181,17 @@ header.header-scrolled #title {
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(var(--primary-rgb, 255, 111, 60), 0.4);
 }
+
 #toggle-theme:hover {
   transform: translateY(-2px) scale(1.03);
   box-shadow: 0 6px 12px rgba(var(--primary-rgb, 255, 111, 60), 0.5);
 }
+
 #toggle-theme:active {
   transform: translateY(0px) scale(1);
   box-shadow: 0 2px 4px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
 }
+
 /* =================== LAYOUT =================== */
 .content-wrapper {
   display: flex;
@@ -182,45 +204,7 @@ header.header-scrolled #title {
   flex: 1;
 }
 
-/* =================== CATEGORY SIDEBAR =================== */
-.category-sidebar {
-  width: 220px;
-  background-color: var(--category-bg);
-  border: 1px solid var(--category-border);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  position: sticky;
-  top: 100px;
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-  transition: background-color 0.4s ease, border-color 0.4s ease;
-}
 
-#categoryTabs {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: stretch;
-}
-
-.search-input {
-  padding: 8px 16px;
-  border: 1px solid var(--category-border);
-  border-radius: 20px;
-  font-size: 1rem;
-  outline: none;
-  width: 220px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.search-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
-}
 
 .category-tab {
   background: none;
@@ -328,8 +312,8 @@ main {
   cursor: default;
 }
 .card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 32px -6px var(--card-glow-hover, rgba(var(--primary-rgb, 255, 111, 60), 0.35));
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px -4px var(--card-glow-hover, rgba(var(--primary-rgb, 255, 111, 60), 0.3));
   border-color: var(--primary);
 }
 
@@ -343,6 +327,7 @@ main {
   font-size: 2.5rem;
   overflow: hidden;
 }
+
 .card-image img {
   display: none;
 }
@@ -363,6 +348,25 @@ main {
   background: var(--primary);
   color: #fff;
 }
+
+
+.remove-btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remove-btn:hover {
+  background: var(--card-border);
+}
+
 
 .card-content {
   padding: 24px;
@@ -528,10 +532,10 @@ main {
     height: 45px;
   }
 
-  .Container_Right ul {
+  .main-nav ul {
     gap: 10px;
   }
-  .Container_Right a {
+  .main-nav a {
     font-size: 0.85rem;
     padding: 8px 12px;
   }
@@ -540,11 +544,7 @@ main {
     font-size: 0.75rem;
   }
 
-  .category-sidebar {
-    padding: 15px;
-  }
   #categoryTabs {
-    flex-direction: row;
     flex-wrap: wrap;
     gap: 8px 12px;
   }
@@ -588,12 +588,12 @@ main {
     font-size: 1.6rem;
   }
 
-  .Container_Right nav ul {
+  .main-nav ul {
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px 10px;
   }
-  .Container_Right a {
+  .main-nav a {
     font-size: 0.8rem;
     padding: 7px 10px;
   }
@@ -604,18 +604,9 @@ main {
     font-size: 0.8rem;
   }
 
-  .category-sidebar {
-    padding: 12px 15px;
-    gap: 10px;
-    margin-top: 0;
-  }
   #categoryTabs {
-    flex-direction: row;
     flex-wrap: wrap;
     gap: 8px;
-  }
-  .search-input {
-    width: 180px;
   }
   .category-tab {
     padding: 6px 15px;
@@ -665,21 +656,9 @@ main {
     margin-left: auto;
     margin-right: auto;
   }
-  .category-sidebar {
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    padding: 10px 15px;
-    gap: 8px;
-  }
   #categoryTabs {
-    flex-direction: row;
-    flex-wrap: wrap;
     justify-content: center;
     gap: 6px 10px;
-  }
-  .search-input {
-    width: 100%;
   }
   header {
     /* استایل‌های موبایل کوچک برای هدر */
@@ -693,7 +672,7 @@ main {
     font-size: 1.5rem;
   }
 
-  .Container_Right nav ul {
+  .main-nav ul {
     gap: 5px 8px;
   }
 }

@@ -5,7 +5,7 @@
   --background: #e0f2f1;
   --header-bg: #004d40;
   --text: #222;
-  --text-light: #e0f2f1;
+  --text-light: #fff;
   --card-bg: #fff;
   --card-border: #b2dfdb;
   --card-image-bg: #b2dfdb;
@@ -15,6 +15,6 @@
   --category-border: #a5d5d3;
   --card-glow: rgba(0,150,136,0.07);
   --card-glow-hover: rgba(0,150,136,0.33);
-  --gradient-start: #20e2d7;
-  --gradient-end: #1fa2ff;
+  --gradient-start: var(--primary-dark);
+  --gradient-end: var(--header-bg);
 }
