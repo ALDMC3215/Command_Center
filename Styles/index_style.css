@@ -59,8 +59,8 @@ header {
   z-index: 1000;
   background: radial-gradient(
     circle at top left,
-    var(--primary-dark),
-    var(--header-bg)
+    var(--gradient-start),
+    var(--gradient-end)
   );
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -72,8 +72,8 @@ header {
   padding: 0 60px;
   background: radial-gradient(
     circle at top left,
-    var(--primary-dark),
-    var(--header-bg)
+    var(--gradient-start),
+    var(--gradient-end)
   );
   color: var(--text-light);
   height: 90px;
@@ -95,9 +95,10 @@ header.header-scrolled {
   height: 70px;
   padding-top: 0;
   padding-bottom: 0;
-  background: linear-gradient(135deg, var(--primary-dark), var(--header-bg));
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
 
 .Container_Left {
   display: flex;
@@ -170,21 +171,27 @@ header.header-scrolled #title {
 #toggle-theme {
   font-size: 0.8rem;
   padding: 9px 18px;
-  background-color: var(--primary);
+  background-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   color: #fff;
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.3s, box-shadow 0.3s;
   margin-left: 15px;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(var(--primary-rgb, 255, 111, 60), 0.4);
 }
+
 #toggle-theme:hover {
-  background-color: var(--primary-dark);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 12px rgba(var(--primary-rgb, 255, 111, 60), 0.5);
 }
+
 #toggle-theme:active {
-  background-color: var(--primary);
+  transform: translateY(0px) scale(1);
+  box-shadow: 0 2px 4px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
 }
+
 /* =================== LAYOUT =================== */
 .content-wrapper {
   display: flex;
@@ -312,7 +319,7 @@ main {
 
 .card-image {
   width: 180px;
-  background-image: linear-gradient(135deg, var(--primary-dark), var(--header-bg));
+  background-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -320,6 +327,7 @@ main {
   font-size: 2.5rem;
   overflow: hidden;
 }
+
 .card-image img {
   display: none;
 }
@@ -341,6 +349,7 @@ main {
   color: #fff;
 }
 
+
 .remove-btn {
   background: transparent;
   color: var(--text);
@@ -353,9 +362,11 @@ main {
   align-items: center;
   gap: 6px;
 }
+
 .remove-btn:hover {
   background: var(--card-border);
 }
+
 
 .card-content {
   padding: 24px;

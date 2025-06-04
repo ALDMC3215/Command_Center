@@ -197,13 +197,13 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
 
-    removeButton.addEventListener("click", () => {
-      allCardsData = allCardsData.filter((c) => c.url !== cardInfo.url);
-      localStorage.setItem("cardsDataALDMC", JSON.stringify(allCardsData));
-      renderCards(currentCategory, searchInput ? searchInput.value : "");
-      const categories = getUniqueCategories(allCardsData);
-      renderCategoryTabs(categories);
-    });
+removeButton.addEventListener("click", () => {
+  allCardsData = allCardsData.filter((c) => c.url !== cardInfo.url);
+  localStorage.setItem("cardsDataALDMC", JSON.stringify(allCardsData));
+  renderCards(currentCategory, searchInput ? searchInput.value : "");
+  const categories = getUniqueCategories(allCardsData);
+  renderCategoryTabs(categories);
+});
 
 
 

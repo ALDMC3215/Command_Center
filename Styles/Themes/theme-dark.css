@@ -11,8 +11,8 @@
   --card-image-bg: #292929;
   --dropdown-bg: #1f1f1f;
   --dropdown-text: #ccc;
-  --category-bg: #191b21; /* ← نزدیک به header-bg، کمی روشن‌تر برای contrast */
-  --category-border: #23252e; /* ← خط border خیلی subtle و خفن */
+  --category-bg: #191b21;
+  --category-border: #23252e;
   --card-glow: rgba(255, 111, 60, 0.11);
   --card-glow-hover: rgba(255, 170, 120, 0.42);
   --gradient-start: var(--primary-dark);
