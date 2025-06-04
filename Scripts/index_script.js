@@ -1,7 +1,8 @@
 // صبر می‌کنیم تا کل محتوای HTML بارگذاری شود
 document.addEventListener("DOMContentLoaded", () => {
   // =================== SELECTORS ===================
-  const categoryBar = document.getElementById("categoryBar");
+  const categoryTabs = document.getElementById("categoryTabs");
+  const searchInput = document.getElementById("searchInput");
   const cardContainer = document.getElementById("cardContainer");
   const themeToggleButton = document.getElementById("toggle-theme");
   const themeStyleLink = document.getElementById("theme-style");
@@ -52,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderCategoryTabs(categories) {
-    if (!categoryBar) return;
-    categoryBar.innerHTML = "";
+    if (!categoryTabs) return;
+    categoryTabs.innerHTML = "";
     categories.forEach((category) => {
       const button = document.createElement("button");
       button.className = "category-tab";
@@ -62,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (category === "All") {
         button.classList.add("active");
       }
-      categoryBar.appendChild(button);
+      categoryTabs.appendChild(button);
     });
   }
 
@@ -110,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const img = document.createElement("img");
       // Using WordPress mShots service for screenshots. Adjust dimensions as needed.
       img.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(
-        cardInfo.visitLink
+        cardInfo.visitLink,
       )}?w=300&h=180`;
       img.alt = `پیش‌نمایش ${cardInfo.title || "سایت"}`;
       // Styling for the image to fit the container
@@ -137,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return cardElement;
   }
 
-  function renderCards(filterCategory = "All") {
+  function renderCards(filterCategory = "All", searchQuery = "") {
     if (!cardContainer || !allCardsData) return;
 
     cardContainer.classList.add("animating");
@@ -146,10 +147,14 @@ document.addEventListener("DOMContentLoaded", () => {
       cardContainer.innerHTML = "";
       const fragment = document.createDocumentFragment();
 
-      const filteredData =
-        filterCategory === "All"
-          ? allCardsData
-          : allCardsData.filter((card) => card.category === filterCategory);
+      const filteredData = allCardsData.filter((card) => {
+        const categoryMatch =
+          filterCategory === "All" || card.category === filterCategory;
+        const text =
+          `${card.title || ""} ${card.subtitle || ""} ${card.description || ""}`.toLowerCase();
+        const searchMatch = text.includes(searchQuery.toLowerCase());
+        return categoryMatch && searchMatch;
+      });
 
       if (filteredData.length === 0) {
         cardContainer.innerHTML =
@@ -165,19 +170,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =================== EVENT LISTENERS ===================
-  if (categoryBar) {
-    categoryBar.addEventListener("click", (event) => {
+  let currentCategory = "All";
+
+  if (categoryTabs) {
+    categoryTabs.addEventListener("click", (event) => {
       const target = event.target;
       if (target.classList.contains("category-tab")) {
-        const currentActiveTab = categoryBar.querySelector(
-          ".category-tab.active"
+        const currentActiveTab = categoryTabs.querySelector(
+          ".category-tab.active",
         );
         if (currentActiveTab) {
           currentActiveTab.classList.remove("active");
         }
         target.classList.add("active");
-        renderCards(target.dataset.category);
+        currentCategory = target.dataset.category;
+        renderCards(currentCategory, searchInput ? searchInput.value : "");
       }
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      renderCards(currentCategory, searchInput.value);
     });
   }
 
@@ -187,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("data/cards-data.json");
       if (!response.ok) {
         throw new Error(
-          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`
+          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`,
         );
       }
       allCardsData = await response.json();
@@ -202,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const categories = getUniqueCategories(allCardsData);
       renderCategoryTabs(categories);
-      renderCards();
+      renderCards(currentCategory, searchInput ? searchInput.value : "");
     } catch (error) {
       console.error("خطا در مقداردهی اولیه برنامه:", error);
       if (cardContainer) {
