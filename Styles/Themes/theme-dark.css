@@ -5,7 +5,7 @@
   --background: #121212;
   --header-bg: #1e1e1e;
   --text: #e0e0e0;
-  --text-light: #999;
+  --text-light: #fff;
   --card-bg: #1c1c1c;
   --card-border: #2e2e2e;
   --card-image-bg: #292929;
@@ -15,4 +15,6 @@
   --category-border: #23252e; /* ← خط border خیلی subtle و خفن */
   --card-glow: rgba(255, 111, 60, 0.11);
   --card-glow-hover: rgba(255, 170, 120, 0.42);
+  --gradient-start: var(--primary-dark);
+  --gradient-end: var(--header-bg);
 }

@@ -20,39 +20,30 @@
         <img id="Logo" src="Images/Logo White.svg" alt="Logo" />
         <h1 id="title">Command Center</h1>
       </div>
-      <div class="Container_Right">
-        <nav>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="About.html">About</a></li>
-            <li><a href="Contact.html">Contact</a></li>
-            <li><a href="Login.html">Login</a></li>
-            <li>
-              <button id="toggle-theme" class="btn outline">Toggle Theme</button>
-            </li>
-          </ul>
-        </nav>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="About.html">About</a></li>
+          <li><a href="Contact.html">Contact</a></li>
+          <li><a href="Login.html">Login</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button id="toggle-theme" class="btn outline">Theme</button>
+        <button id="addCardBtn" class="btn">Add Card</button>
       </div>
     </div>
   </header>
+  <div class="categories-bar">
+    <div id="categoryTabs"></div>
+  </div>
 
   <!-- ========== WRAPPER: ALL SCROLLABLE CONTENT ========== -->
   <div id="smooth-wrapper">
     <div class="content-wrapper">
-      <aside class="category-sidebar">
-        <input
-          type="text"
-          id="searchInput"
-          class="search-input"
-          placeholder="Search..."
-        />
-        <div id="categoryTabs"></div>
-        <button id="addCardBtn" class="btn">Add Card</button>
-      </aside>
-
       <main>
         <section class="grid-section">
-          <div class="card-grid" id="cardContainer"></div>
+          <div class="card-list" id="cardContainer"></div>
         </section>
       </main>
     </div>
@@ -66,12 +57,16 @@
         <h2>Add Card</h2>
         <form id="addCardForm">
           <label>
-            Title
+            Website Name
             <input type="text" name="title" required />
           </label>
           <label>
-            URL
+            Website Link
             <input type="url" name="url" required />
+          </label>
+          <label>
+            Short Description
+            <textarea name="description" rows="3"></textarea>
           </label>
           <div class="modal-actions">
             <button type="button" id="cancelAddCard" class="btn outline">

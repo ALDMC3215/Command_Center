@@ -1,0 +1,20 @@
+:root {
+  --primary: #ff5722;
+  --primary-dark: #e64a19;
+  --primary-rgb: 255, 87, 34;
+  --background: #fff4e0;
+  --header-bg: #bf360c;
+  --text: #222;
+  --text-light: #fff;
+  --card-bg: #fff;
+  --card-border: #ffccbc;
+  --card-image-bg: #ffe0b2;
+  --dropdown-bg: white;
+  --dropdown-text: #222;
+  --category-bg: #ffe5d1;
+  --category-border: #ffc7b0;
+  --card-glow: rgba(255,87,34,0.07);
+  --card-glow-hover: rgba(255,87,34,0.33);
+  --gradient-start: var(--primary-dark);
+  --gradient-end: var(--header-bg);
+}
