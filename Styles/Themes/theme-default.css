@@ -1,0 +1,17 @@
+:root {
+  --primary: #ff6f3c;
+  --primary-dark: #d64c1a;
+  --background: #f7f9fc;
+  --header-bg: #1e1e2f;
+  --text: #333;
+  --text-light: #eee;
+  --card-bg: #fff;
+  --card-border: #ddd;
+  --card-image-bg: #eee;
+  --dropdown-bg: white;
+  --dropdown-text: #333;
+  --category-bg: #e6e8ef; /* ← روشن و تمیز نزدیک به bg سایت، مناسب برای لایت */
+  --category-border: #d6dae3; /* ← خط border خیلی نرم، نزدیک به دسته‌بندی */
+  --card-glow: rgba(255, 111, 60, 0.07); /* subtle shadow حالت عادی */
+  --card-glow-hover: rgba(255, 111, 60, 0.33); /* glow روشن و قوی روی هاور */
+}

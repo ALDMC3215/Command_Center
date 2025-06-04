@@ -1,0 +1,563 @@
+/* ===== RESET & BASE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Quicksand", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+body {
+  position: relative;
+}
+
+#smooth-wrapper {
+  width: 100%;
+  padding-top: 90px; /* Match header height */
+}
+
+/* ===== HEADER ===== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 60px;
+  background-color: var(--header-bg);
+  color: var(--text-light);
+  height: 90px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: height 0.3s, padding-top 0.3s, background-color 0.3s,
+    box-shadow 0.3s;
+}
+
+header.header-scrolled {
+  height: 70px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color: var(--header-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.Container_Left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+#Logo {
+  height: 60px;
+  transition: height 0.3s, transform 0.3s;
+}
+header.header-scrolled #Logo {
+  height: 50px;
+}
+#Logo:hover {
+  transform: scale(1.05);
+}
+#title {
+  font-size: 2rem;
+  font-weight: 700;
+  transition: font-size 0.3s;
+}
+header.header-scrolled #title {
+  font-size: 1.8rem;
+}
+.Container_Right ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.Container_Right a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 15px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.3s;
+}
+.Container_Right a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(var(--primary-rgb, 255, 111, 60), 0.15);
+  border-radius: inherit;
+  z-index: -1;
+  transition: left 0.3s;
+}
+.Container_Right a:hover::before {
+  left: 0;
+}
+.Container_Right a:hover {
+  color: var(--primary);
+}
+#toggle-theme {
+  font-size: 0.8rem;
+  padding: 9px 18px;
+  background-color: transparent;
+  color: var(--text-light);
+  border: 1.5px solid var(--text-light);
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-left: 15px;
+  font-weight: 600;
+}
+#toggle-theme:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 5px 10px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
+}
+#toggle-theme:active {
+  transform: translateY(0px) scale(1);
+  box-shadow: 0 2px 5px rgba(var(--primary-rgb, 255, 111, 60), 0.2);
+}
+/* =================== CATEGORY BAR =================== */
+.category-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 15px;
+  padding: 20px 60px;
+  height: auto;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: var(--category-bg);
+  border-bottom: 1px solid var(--category-border);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.category-tab {
+  background: none;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  position: relative;
+  transition: color 0.25s ease, background-color 0.25s ease, transform 0.2s ease;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+}
+.category-tab:hover {
+  transform: translateY(-2px);
+}
+
+.category-tab::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  bottom: -1px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 2px;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+
+.category-tab.active {
+  color: var(--primary);
+}
+
+.category-tab.active::after {
+  opacity: 1;
+  left: 15%;
+  right: 15%;
+}
+
+.category-tab:hover:not(.active) {
+  color: var(--primary-dark);
+  background-color: rgba(var(--primary-rgb, 255, 111, 60), 0.05);
+}
+
+/* =================== MAIN & SECTION =================== */
+main {
+  padding: 25px 60px 40px 60px;
+  text-align: center;
+}
+
+.welcome h2 {
+  font-size: 2.8rem;
+  color: var(--primary-dark);
+  margin-bottom: 15px;
+}
+.welcome p {
+  font-size: 1.3rem;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.grid-section {
+  padding: 30px 0;
+}
+
+/* =================== CARD GRID =================== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 40px;
+  padding: 20px 0;
+  opacity: 1;
+  transition: opacity 0.2s cubic-bezier(0.6, 0, 0.3, 1);
+}
+
+.card-grid.animating {
+  opacity: 0;
+  pointer-events: none;
+}
+.no-results,
+.error-message {
+  color: var(--text);
+  opacity: 0.7;
+  font-size: 1.2rem;
+  padding: 40px;
+}
+
+/* =================== CARD =================== */
+.card {
+  background-color: var(--card-bg, #fff);
+  border-radius: 20px;
+  border: 1px solid var(--card-border, #ddd);
+  box-shadow: 0 8px 24px -4px var(--card-glow, rgba(0, 0, 0, 0.1));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  min-height: 400px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease,
+    border-color 0.4s ease;
+  cursor: default;
+}
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 32px -6px var(--card-glow-hover, rgba(var(--primary-rgb, 255, 111, 60), 0.35));
+  border-color: var(--primary);
+}
+
+.card-image {
+  height: 180px;
+  background-color: var(--card-image-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-dark);
+  font-size: 2.5rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--card-border);
+}
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: right;
+}
+.card-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-weight: 700;
+}
+.card-content .subtitle {
+  font-size: 0.95rem;
+  color: var(--text);
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+.card-content .description {
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.85;
+  line-height: 1.6;
+  margin-top: auto;
+  text-align: justify;
+}
+
+/* =================== BUTTONS =================== */
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 10px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn i {
+  font-size: 1em;
+}
+
+.btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(var(--primary-rgb, 255, 111, 60), 0.2);
+}
+.btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn.outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+.btn.outline:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* =================== THEME OVERLAY =================== */
+#themeOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--background);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.4s ease-in-out;
+}
+
+/* =================== RESPONSIVE =================== */
+@media (max-width: 992px) {
+  header,
+  header.header-scrolled {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  header {
+    height: 80px;
+  }
+  header.header-scrolled {
+    height: 65px;
+  }
+  #smooth-wrapper {
+    padding-top: 80px;
+  }
+
+  #title {
+    font-size: 1.8rem;
+  }
+  header.header-scrolled #title {
+    font-size: 1.6rem;
+  }
+
+  #Logo {
+    height: 55px;
+  }
+  header.header-scrolled #Logo {
+    height: 45px;
+  }
+
+  .Container_Right ul {
+    gap: 10px;
+  }
+  .Container_Right a {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+  #toggle-theme {
+    padding: 8px 15px;
+    font-size: 0.75rem;
+  }
+
+  .category-bar {
+    padding: 15px 30px;
+  }
+  main {
+    padding: 20px 30px 30px 30px;
+  }
+  .card-grid {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* --- MOBILE HEADER CHANGES --- */
+  header {
+    position: static; /* هدر در موبایل دیگر ثابت نیست */
+    height: auto !important;
+    flex-direction: column;
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* یک سایه ملایم برای هدر معمولی */
+  }
+  /* کلاس header-scrolled دیگر تاثیری بر position یا height در موبایل ندارد */
+  header.header-scrolled {
+    /* استایل‌های خاص اسکرول برای موبایل اگر نیاز بود، اینجا می‌آیند */
+    /* اما با position: static، بیشتر اینها دیگر اعمال نمی‌شوند */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* سایه ثابت می‌ماند */
+  }
+
+  #smooth-wrapper {
+    padding-top: 0; /* چون هدر دیگر fixed نیست، نیازی به padding-top نیست */
+  }
+  /* --- END MOBILE HEADER CHANGES --- */
+
+  .Container_Left {
+    margin-bottom: 12px;
+    text-align: center;
+  } /* لوگو و عنوان در مرکز */
+  #Logo {
+    height: 50px;
+  }
+  #title {
+    font-size: 1.6rem;
+  }
+
+  .Container_Right nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 10px;
+  }
+  .Container_Right a {
+    font-size: 0.8rem;
+    padding: 7px 10px;
+  }
+  #toggle-theme {
+    width: auto;
+    padding: 8px 18px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+  }
+
+  .category-bar {
+    padding: 12px 20px;
+    gap: 8px;
+    margin-top: 0; /* برای چسبیدن به هدر */
+  }
+  .category-tab {
+    padding: 6px 15px;
+    font-size: 0.95rem;
+  }
+
+  main {
+    padding: 15px 20px 25px 20px;
+  }
+  .welcome h2 {
+    font-size: 2rem;
+  }
+  .welcome p {
+    font-size: 1rem;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    min-height: 340px;
+    border-radius: 16px;
+  }
+  .card-content h3 {
+    font-size: 1.1rem;
+  }
+  .card-content .subtitle,
+  .card-content .description {
+    font-size: 0.85rem;
+  }
+  .card-actions {
+    padding-top: 12px;
+    gap: 8px;
+  }
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .card {
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .category-bar {
+    justify-content: center;
+    padding: 10px 15px;
+  }
+  header {
+    /* استایل‌های موبایل کوچک برای هدر */
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .Container_Left {
+    gap: 8px;
+  }
+  #title {
+    font-size: 1.5rem;
+  }
+
+  .Container_Right nav ul {
+    gap: 5px 8px;
+  }
+}
+
+/* یادآوری: برای استفاده از متغیر --primary-rgb در rgba (مثلاً در افکت هاور لینک‌های منو)،
+  باید آن را در فایل‌های تم خود تعریف کنید. مثال برای theme-default.css:
+  :root {
+    --primary: #ff6f3c;
+    --primary-rgb: 255, 111, 60; // این خط اضافه شود
+    ...
+  }
+*/
