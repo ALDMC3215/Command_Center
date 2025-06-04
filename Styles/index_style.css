@@ -40,6 +40,20 @@ body {
 
 /* ===== HEADER ===== */
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: radial-gradient(
+    circle at top left,
+    var(--primary-dark),
+    var(--header-bg)
+  );
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -51,18 +65,6 @@ header {
   );
   color: var(--text-light);
   height: 90px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  background: radial-gradient(
-    circle at top left,
-    var(--primary-dark),
-    var(--header-bg)
-  );
-  box-shadow: 0.3s;
 }
 
 header.header-scrolled {
@@ -117,17 +119,16 @@ header.header-scrolled #title {
 .Container_Right a::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(var(--primary-rgb, 255, 111, 60), 0.15);
   border-radius: inherit;
   z-index: -1;
-  transition: left 0.3s;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
 }
 .Container_Right a:hover::before {
-  left: 0;
+  transform: scaleX(1);
 }
 .Container_Right a:hover {
   color: var(--primary);
@@ -679,6 +680,52 @@ main {
   .Container_Right nav ul {
     gap: 5px 8px;
   }
+}
+
+/* ===== Modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal-overlay.show {
+  display: flex;
+}
+.modal {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 320px;
+}
+.modal h2 {
+  margin-bottom: 15px;
+  color: var(--text);
+}
+.modal label {
+  display: block;
+  margin-bottom: 10px;
+  text-align: left;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.modal input {
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.modal-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 /* یادآوری: برای استفاده از متغیر --primary-rgb در rgba (مثلاً در افکت هاور لینک‌های منو)،

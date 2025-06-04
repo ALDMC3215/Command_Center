@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeStyleLink = document.getElementById("theme-style");
   const themeOverlay = document.getElementById("themeOverlay");
   const themeMenu = document.getElementById("themeMenu");
+  const addCardBtn = document.getElementById("addCardBtn");
+  const addCardOverlay = document.getElementById("addCardOverlay");
+  const addCardForm = document.getElementById("addCardForm");
+  const cancelAddCard = document.getElementById("cancelAddCard");
 
   let allCardsData = []; // برای نگهداری داده‌های اصلی کارت‌ها
   const favorites = new Set(
@@ -41,6 +45,23 @@ document.addEventListener("DOMContentLoaded", () => {
       new RegExp(query, "gi"),
       (match) => `<mark>${match}</mark>`
     );
+  }
+
+  function isValidUrl(str) {
+    try {
+      new URL(str.startsWith("http") ? str : `https://${str}`);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function openAddCardModal() {
+    if (addCardOverlay) addCardOverlay.classList.add("show");
+  }
+
+  function closeAddCardModal() {
+    if (addCardOverlay) addCardOverlay.classList.remove("show");
   }
 
   // =================== THEME SWITCHER ===================
@@ -308,41 +329,59 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", handleSearch);
   }
 
+  if (addCardBtn && addCardOverlay && addCardForm) {
+    addCardBtn.addEventListener("click", openAddCardModal);
+    cancelAddCard.addEventListener("click", closeAddCardModal);
+    addCardOverlay.addEventListener("click", (e) => {
+      if (e.target === addCardOverlay) {
+        closeAddCardModal();
+      }
+    });
+
+    addCardForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const formData = new FormData(addCardForm);
+      const title = formData.get("title").trim();
+      const url = formData.get("url").trim();
+      if (!title || !isValidUrl(url)) {
+        alert("Please enter a valid title and URL");
+        return;
+      }
+      const newCard = { title, url };
+      try {
+        const stored = JSON.parse(localStorage.getItem("cardsDataALDMC")) || [];
+        stored.push(newCard);
+        localStorage.setItem("cardsDataALDMC", JSON.stringify(stored));
+        addCardForm.reset();
+        closeAddCardModal();
+        initializeApp();
+      } catch (err) {
+        console.error("Error saving card data:", err);
+        alert("Error saving data");
+      }
+    });
+  }
+
   // =================== INITIAL DATA FETCH & RENDER ===================
   async function initializeApp() {
     try {
-      const response = await fetch("data/cards-data.json");
-      if (!response.ok) {
-        throw new Error(
-          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`
-        );
-      }
-      allCardsData = await response.json();
+      const stored = localStorage.getItem("cardsDataALDMC");
+      allCardsData = stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error("خطا در خواندن فایل JSON:", error);
-      if (window.cardsData) {
-        allCardsData = window.cardsData;
-      } else {
-        if (cardContainer) {
-          cardContainer.innerHTML =
-            '<p class="error-message">متاسفانه مشکلی در بارگذاری اطلاعات پیش آمده است.</p>';
-        }
-        return;
-      }
-    }
-
-    if (!Array.isArray(allCardsData)) {
-      console.error("فرمت داده‌های دریافتی صحیح نیست. انتظار آرایه می‌رفت.");
+      console.error("خطا در خواندن داده‌های ذخیره شده:", error);
       allCardsData = [];
-      cardContainer.innerHTML =
-        '<p class="error-message">خطا در بارگذاری اطلاعات کارت‌ها. لطفاً بعداً تلاش کنید.</p>';
-      return;
     }
 
     const categories = getUniqueCategories(allCardsData);
     renderCategoryTabs(categories);
     renderCards(currentCategory, searchInput ? searchInput.value : "");
   }
+
+  window.addEventListener("storage", (e) => {
+    if (e.key === "cardsDataALDMC") {
+      initializeApp();
+    }
+  });
 
   initializeApp();
 });
