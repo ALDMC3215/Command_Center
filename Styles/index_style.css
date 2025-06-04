@@ -44,7 +44,11 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 60px;
-  background: radial-gradient(circle at top left, var(--primary-dark), var(--header-bg));
+  background: radial-gradient(
+    circle at top left,
+    var(--primary-dark),
+    var(--header-bg)
+  );
   color: var(--text-light);
   height: 90px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -53,8 +57,12 @@ header {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: radial-gradient(circle at top left, var(--primary-dark), var(--header-bg));
-    box-shadow 0.3s;
+  background: radial-gradient(
+    circle at top left,
+    var(--primary-dark),
+    var(--header-bg)
+  );
+  box-shadow: 0.3s;
 }
 
 header.header-scrolled {

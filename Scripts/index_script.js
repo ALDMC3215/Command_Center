@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let allCardsData = []; // برای نگهداری داده‌های اصلی کارت‌ها
   const favorites = new Set(
-    JSON.parse(localStorage.getItem("favoriteCardsALDMC") || "[]"),
+    JSON.parse(localStorage.getItem("favoriteCardsALDMC") || "[]")
   );
 
   function debounce(fn, delay) {
@@ -32,12 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     },
-    { rootMargin: "100px" },
+    { rootMargin: "100px" }
   );
 
   function highlight(text, query) {
     if (!query) return text;
-    return text.replace(new RegExp(query, "gi"), (match) => `<mark>${match}</mark>`);
+    return text.replace(
+      new RegExp(query, "gi"),
+      (match) => `<mark>${match}</mark>`
+    );
   }
 
   // =================== THEME SWITCHER ===================
@@ -151,10 +154,14 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="card-content">
         <div>
           <h3>${highlight(cardInfo.title || "بدون عنوان", searchQuery)}</h3>
-          <p class="subtitle">${highlight(cardInfo.subtitle || "", searchQuery)}</p>
-          <p class="description">${
-            highlight(cardInfo.description || "توضیحی وجود ندارد.", searchQuery)
-          }</p>
+          <p class="subtitle">${highlight(
+            cardInfo.subtitle || "",
+            searchQuery
+          )}</p>
+          <p class="description">${highlight(
+            cardInfo.description || "توضیحی وجود ندارد.",
+            searchQuery
+          )}</p>
         </div>
         <div class="card-actions">
           <a href="${
@@ -171,58 +178,62 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-const imageDiv = cardElement.querySelector(".card-image");
-const favButton = cardElement.querySelector(".fav-btn");
+    const imageDiv = cardElement.querySelector(".card-image");
+    const favButton = cardElement.querySelector(".fav-btn");
 
-favButton.addEventListener("click", () => {
-  if (favorites.has(cardInfo.url)) {
-    favorites.delete(cardInfo.url);
-    favButton.classList.remove("active");
-    favButton.querySelector("i").classList.replace("fas", "far");
-  } else {
-    favorites.add(cardInfo.url);
-    favButton.classList.add("active");
-    favButton.querySelector("i").classList.replace("far", "fas");
+    favButton.addEventListener("click", () => {
+      if (favorites.has(cardInfo.url)) {
+        favorites.delete(cardInfo.url);
+        favButton.classList.remove("active");
+        favButton.querySelector("i").classList.replace("fas", "far");
+      } else {
+        favorites.add(cardInfo.url);
+        favButton.classList.add("active");
+        favButton.querySelector("i").classList.replace("far", "fas");
+      }
+      localStorage.setItem(
+        "favoriteCardsALDMC",
+        JSON.stringify(Array.from(favorites))
+      );
+    });
+
+    const siteUrl = cardInfo.visitLink || cardInfo.url;
+    if (
+      siteUrl &&
+      (siteUrl.startsWith("http://") || siteUrl.startsWith("https://"))
+    ) {
+      const img = document.createElement("img");
+      img.dataset.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(
+        siteUrl
+      )}`;
+      img.alt = cardInfo.title || "thumbnail";
+      img.style.width = "100%";
+      img.style.height = "100%";
+      img.style.objectFit = "cover";
+
+      img.onerror = () => {
+        // fallback to icon
+        imageDiv.innerHTML = `<i class="${
+          cardInfo.icon || "fas fa-link"
+        } fa-3x"></i>`;
+      };
+
+      imageDiv.innerHTML = "";
+      imageDiv.appendChild(img);
+      observer.observe(img);
+    } else if (cardInfo.icon) {
+      imageDiv.innerHTML = `<i class="${cardInfo.icon} fa-3x"></i>`;
+    } else {
+      const img = document.createElement("img");
+      img.dataset.src = "Images/Icon.png";
+      img.alt = cardInfo.title || "thumbnail";
+      imageDiv.innerHTML = "";
+      imageDiv.appendChild(img);
+      observer.observe(img);
+    }
+
+    return cardElement;
   }
-  localStorage.setItem(
-    "favoriteCardsALDMC",
-    JSON.stringify(Array.from(favorites)),
-  );
-});
-
-const siteUrl = cardInfo.visitLink || cardInfo.url;
-if (
-  siteUrl &&
-  (siteUrl.startsWith("http://") || siteUrl.startsWith("https://"))
-) {
-  const img = document.createElement("img");
-  img.dataset.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(siteUrl)}`;
-  img.alt = cardInfo.title || "thumbnail";
-  img.style.width = "100%";
-  img.style.height = "100%";
-  img.style.objectFit = "cover";
-
-  img.onerror = () => {
-    // fallback to icon
-    imageDiv.innerHTML = `<i class="${cardInfo.icon || "fas fa-link"} fa-3x"></i>`;
-  };
-
-  imageDiv.innerHTML = "";
-  imageDiv.appendChild(img);
-  observer.observe(img);
-} else if (cardInfo.icon) {
-  imageDiv.innerHTML = `<i class="${cardInfo.icon} fa-3x"></i>`;
-} else {
-  const img = document.createElement("img");
-  img.dataset.src = "Images/Icon.png";
-  img.alt = cardInfo.title || "thumbnail";
-  imageDiv.innerHTML = "";
-  imageDiv.appendChild(img);
-  observer.observe(img);
-}
-
-return cardElement;
-
 
   function renderCards(filterCategory = "All", searchQuery = "") {
     if (!cardContainer || !allCardsData) return;
@@ -233,20 +244,21 @@ return cardElement;
       cardContainer.innerHTML = "";
       const fragment = document.createDocumentFragment();
 
-let filteredData = allCardsData.filter((card) => {
-  const cardCat = card.category ? card.category.trim() : "General";
-  const categoryMatch =
-    filterCategory === "All" ||
-    (filterCategory === "Favorites"
-      ? favorites.has(card.url)
-      : cardCat === filterCategory);
+      let filteredData = allCardsData.filter((card) => {
+        const cardCat = card.category ? card.category.trim() : "General";
+        const categoryMatch =
+          filterCategory === "All" ||
+          (filterCategory === "Favorites"
+            ? favorites.has(card.url)
+            : cardCat === filterCategory);
 
-  const text = `${card.title || ""} ${card.subtitle || ""} ${card.description || ""}`.toLowerCase();
-  const searchMatch = text.includes(searchQuery.toLowerCase());
+        const text = `${card.title || ""} ${card.subtitle || ""} ${
+          card.description || ""
+        }`.toLowerCase();
+        const searchMatch = text.includes(searchQuery.toLowerCase());
 
-  return categoryMatch && searchMatch;
-});
-
+        return categoryMatch && searchMatch;
+      });
 
       if (filterCategory === "All") {
         filteredData = filteredData.sort((a, b) => {
@@ -333,5 +345,4 @@ let filteredData = allCardsData.filter((card) => {
   }
 
   initializeApp();
-
 });
