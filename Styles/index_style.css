@@ -95,10 +95,13 @@ header.header-scrolled {
   height: 70px;
   padding-top: 0;
   padding-bottom: 0;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(
+    135deg,
+    var(--gradient-start),
+    var(--gradient-end)
+  );
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
 
 .Container_Left {
   display: flex;
@@ -158,7 +161,6 @@ header.header-scrolled #title {
   transform: scaleX(1);
 }
 
-
 .main-nav a:hover {
   color: var(--primary);
 }
@@ -171,7 +173,11 @@ header.header-scrolled #title {
 #toggle-theme {
   font-size: 0.8rem;
   padding: 9px 18px;
-  background-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background-image: linear-gradient(
+    135deg,
+    var(--gradient-start),
+    var(--gradient-end)
+  );
   color: #fff;
   border: none;
   border-radius: 30px;
@@ -203,8 +209,6 @@ header.header-scrolled #title {
 .content-wrapper main {
   flex: 1;
 }
-
-
 
 .category-tab {
   background: none;
@@ -319,7 +323,11 @@ main {
 
 .card-image {
   width: 180px;
-  background-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background-image: linear-gradient(
+    135deg,
+    var(--gradient-start),
+    var(--gradient-end)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -349,7 +357,6 @@ main {
   color: #fff;
 }
 
-
 .remove-btn {
   background: transparent;
   color: var(--text);
@@ -366,7 +373,6 @@ main {
 .remove-btn:hover {
   background: var(--card-border);
 }
-
 
 .card-content {
   padding: 24px;
@@ -731,12 +737,3 @@ main {
   justify-content: flex-end;
   gap: 10px;
 }
-
-/* یادآوری: برای استفاده از متغیر --primary-rgb در rgba (مثلاً در افکت هاور لینک‌های منو)،
-  باید آن را در فایل‌های تم خود تعریف کنید. مثال برای theme-default.css:
-  :root {
-    --primary: #ff6f3c;
-    --primary-rgb: 255, 111, 60; // این خط اضافه شود
-    ...
-  }
-*/

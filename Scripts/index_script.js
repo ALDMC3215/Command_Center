@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-
   function highlight(text, query) {
     if (!query) return text;
     return text.replace(
@@ -154,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Basic structure with placeholders for image/icon
     cardElement.innerHTML = `
       <div class="card-image">
-        <i class="${cardInfo.icon || 'fas fa-globe'}"></i>
+        <i class="${cardInfo.icon || "fas fa-globe"}"></i>
       </div>
       <div class="card-content">
         <div>
@@ -165,10 +164,16 @@ document.addEventListener("DOMContentLoaded", () => {
           )}</p>
         </div>
         <div class="card-actions">
-          <button class="fav-btn ${favorites.has(cardInfo.url) ? 'active' : ''}">
-            <i class="${favorites.has(cardInfo.url) ? 'fas' : 'far'} fa-star"></i> Favorite
+          <button class="fav-btn ${
+            favorites.has(cardInfo.url) ? "active" : ""
+          }">
+            <i class="${
+              favorites.has(cardInfo.url) ? "fas" : "far"
+            } fa-star"></i> Favorite
           </button>
-          <a href="${cardInfo.url || '#'}" class="btn" target="_blank" rel="noopener noreferrer">
+          <a href="${
+            cardInfo.url || "#"
+          }" class="btn" target="_blank" rel="noopener noreferrer">
             <i class="fas fa-external-link-alt"></i> Open
           </a>
           <button class="remove-btn">
@@ -197,15 +202,13 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
 
-removeButton.addEventListener("click", () => {
-  allCardsData = allCardsData.filter((c) => c.url !== cardInfo.url);
-  localStorage.setItem("cardsDataALDMC", JSON.stringify(allCardsData));
-  renderCards(currentCategory, searchInput ? searchInput.value : "");
-  const categories = getUniqueCategories(allCardsData);
-  renderCategoryTabs(categories);
-});
-
-
+    removeButton.addEventListener("click", () => {
+      allCardsData = allCardsData.filter((c) => c.url !== cardInfo.url);
+      localStorage.setItem("cardsDataALDMC", JSON.stringify(allCardsData));
+      renderCards(currentCategory, searchInput ? searchInput.value : "");
+      const categories = getUniqueCategories(allCardsData);
+      renderCategoryTabs(categories);
+    });
 
     return cardElement;
   }
@@ -322,18 +325,18 @@ removeButton.addEventListener("click", () => {
     {
       title: "OpenAI",
       url: "https://openai.com",
-      description: "Artificial intelligence research lab"
+      description: "Artificial intelligence research lab",
     },
     {
       title: "Mozilla",
       url: "https://www.mozilla.org",
-      description: "Creators of the Firefox browser"
+      description: "Creators of the Firefox browser",
     },
     {
       title: "Wikipedia",
       url: "https://wikipedia.org",
-      description: "Free online encyclopedia"
-    }
+      description: "Free online encyclopedia",
+    },
   ];
   async function initializeApp() {
     try {
