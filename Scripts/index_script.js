@@ -311,38 +311,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // =================== INITIAL DATA FETCH & RENDER ===================
   async function initializeApp() {
     try {
-      const response = await fetch("data/cards-data.json");
-      if (!response.ok) {
-        throw new Error(
-          `خطا در بارگذاری داده‌ها: ${response.status} ${response.statusText}`
-        );
-      }
-      allCardsData = await response.json();
+      const stored = localStorage.getItem("cardsDataALDMC");
+      allCardsData = stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error("خطا در خواندن فایل JSON:", error);
-      if (window.cardsData) {
-        allCardsData = window.cardsData;
-      } else {
-        if (cardContainer) {
-          cardContainer.innerHTML =
-            '<p class="error-message">متاسفانه مشکلی در بارگذاری اطلاعات پیش آمده است.</p>';
-        }
-        return;
-      }
-    }
-
-    if (!Array.isArray(allCardsData)) {
-      console.error("فرمت داده‌های دریافتی صحیح نیست. انتظار آرایه می‌رفت.");
+      console.error("خطا در خواندن داده‌های ذخیره شده:", error);
       allCardsData = [];
-      cardContainer.innerHTML =
-        '<p class="error-message">خطا در بارگذاری اطلاعات کارت‌ها. لطفاً بعداً تلاش کنید.</p>';
-      return;
     }
 
     const categories = getUniqueCategories(allCardsData);
     renderCategoryTabs(categories);
     renderCards(currentCategory, searchInput ? searchInput.value : "");
   }
+
+  window.addEventListener("storage", (e) => {
+    if (e.key === "cardsDataALDMC") {
+      initializeApp();
+    }
+  });
 
   initializeApp();
 });

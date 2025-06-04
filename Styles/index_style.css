@@ -118,16 +118,17 @@ header.header-scrolled #title {
   content: "";
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(var(--primary-rgb, 255, 111, 60), 0.15);
   border-radius: inherit;
   z-index: -1;
-  transition: left 0.3s;
+  transform: translateX(-100%);
+  transition: transform 0.3s;
 }
 .Container_Right a:hover::before {
-  left: 0;
+  transform: translateX(0);
 }
 .Container_Right a:hover {
   color: var(--primary);
@@ -155,23 +156,40 @@ header.header-scrolled #title {
   transform: translateY(0px) scale(1);
   box-shadow: 0 2px 5px rgba(var(--primary-rgb, 255, 111, 60), 0.2);
 }
-/* =================== CATEGORY BAR =================== */
-.category-bar {
+/* =================== LAYOUT =================== */
+.content-wrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 40px;
   padding: 20px 60px;
-  gap: 10px;
+}
+
+.content-wrapper main {
+  flex: 1;
+}
+
+/* =================== CATEGORY SIDEBAR =================== */
+.category-sidebar {
+  width: 220px;
   background-color: var(--category-bg);
-  border-bottom: 1px solid var(--category-border);
+  border: 1px solid var(--category-border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: sticky;
+  top: 100px;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
   transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 #categoryTabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px 15px;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
 }
 
 .search-input {
@@ -527,10 +545,12 @@ main {
     font-size: 0.75rem;
   }
 
-  .category-bar {
-    padding: 15px 30px;
+  .category-sidebar {
+    padding: 15px;
   }
   #categoryTabs {
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px 12px;
   }
   main {
@@ -589,12 +609,14 @@ main {
     font-size: 0.8rem;
   }
 
-  .category-bar {
-    padding: 12px 20px;
-    gap: 8px;
-    margin-top: 0; /* برای چسبیدن به هدر */
+  .category-sidebar {
+    padding: 12px 15px;
+    gap: 10px;
+    margin-top: 0;
   }
   #categoryTabs {
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
   }
   .search-input {
@@ -650,7 +672,7 @@ main {
     margin-left: auto;
     margin-right: auto;
   }
-  .category-bar {
+  .category-sidebar {
     flex-direction: column;
     align-items: stretch;
     justify-content: center;
@@ -658,6 +680,8 @@ main {
     gap: 8px;
   }
   #categoryTabs {
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 6px 10px;
   }
