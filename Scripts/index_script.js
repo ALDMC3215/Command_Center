@@ -7,8 +7,38 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeToggleButton = document.getElementById("toggle-theme");
   const themeStyleLink = document.getElementById("theme-style");
   const themeOverlay = document.getElementById("themeOverlay");
+  const themeMenu = document.getElementById("themeMenu");
 
   let allCardsData = []; // برای نگهداری داده‌های اصلی کارت‌ها
+  const favorites = new Set(
+    JSON.parse(localStorage.getItem("favoriteCardsALDMC") || "[]"),
+  );
+
+  function debounce(fn, delay) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src;
+          observer.unobserve(img);
+        }
+      });
+    },
+    { rootMargin: "100px" },
+  );
+
+  function highlight(text, query) {
+    if (!query) return text;
+    return text.replace(new RegExp(query, "gi"), (match) => `<mark>${match}</mark>`);
+  }
 
   // =================== THEME SWITCHER ===================
   const themes = [
@@ -16,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "dark", path: "Styles/Themes/theme-dark.css" },
     { name: "blue", path: "Styles/Themes/theme-blue.css" },
     { name: "green", path: "Styles/Themes/theme-green.css" },
+    { name: "purple", path: "Styles/Themes/theme-purple.css" },
   ];
   let currentThemeIndex = 0;
 
@@ -36,26 +67,64 @@ document.addEventListener("DOMContentLoaded", () => {
   if (currentThemeIndex === -1) currentThemeIndex = 0;
   applyTheme(initialTheme.path);
 
-  if (themeToggleButton) {
+  if (themeMenu) {
+    themeMenu.innerHTML = themes
+      .map((t) => `<button data-theme="${t.name}">${t.name}</button>`)
+      .join("");
+  }
+
+  if (themeToggleButton && themeMenu) {
     themeToggleButton.addEventListener("click", () => {
-      currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-      const nextTheme = themes[currentThemeIndex];
-      applyTheme(nextTheme.path);
-      localStorage.setItem("selectedThemeALDMC", nextTheme.name);
+      const rect = themeToggleButton.getBoundingClientRect();
+      themeMenu.style.top = `${rect.bottom + 6}px`;
+      themeMenu.style.left = `${rect.left}px`;
+      themeMenu.classList.toggle("show");
+    });
+
+    themeMenu.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-theme]");
+      if (!btn) return;
+      const themeName = btn.dataset.theme;
+      const theme = themes.find((t) => t.name === themeName);
+      if (theme) {
+        applyTheme(theme.path);
+        localStorage.setItem("selectedThemeALDMC", theme.name);
+      }
+      themeMenu.classList.remove("show");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (
+        themeMenu.classList.contains("show") &&
+        !themeMenu.contains(e.target) &&
+        e.target !== themeToggleButton
+      ) {
+        themeMenu.classList.remove("show");
+      }
     });
   }
 
   // =================== CATEGORY BAR ===================
   function getUniqueCategories(cardData) {
     const categories = new Set(["All"]);
-    cardData.forEach((card) => categories.add(card.category || "General"));
+    cardData.forEach((card) => {
+      if (card.category) {
+        categories.add(card.category.trim());
+      } else {
+        categories.add("General");
+      }
+    });
     return Array.from(categories);
   }
 
   function renderCategoryTabs(categories) {
     if (!categoryTabs) return;
     categoryTabs.innerHTML = "";
-    categories.forEach((category) => {
+    const allCats = [...categories];
+    if (favorites.size > 0 && !allCats.includes("Favorites")) {
+      allCats.unshift("Favorites");
+    }
+    allCats.forEach((category) => {
       const button = document.createElement("button");
       button.className = "category-tab";
       button.textContent = category;
@@ -68,30 +137,33 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =================== CARDS ===================
-  function createCardElement(cardInfo) {
+  function createCardElement(cardInfo, searchQuery = "") {
     const cardElement = document.createElement("div");
     cardElement.className = "card";
 
     // Basic structure with placeholders for image/icon
     cardElement.innerHTML = `
       <div class="card-image">
-        </div>
+        <button class="fav-btn" title="افزودن به علاقه‌مندی‌ها">
+          <i class="${favorites.has(cardInfo.url) ? "fas" : "far"} fa-star"></i>
+        </button>
+      </div>
       <div class="card-content">
         <div>
-          <h3>${cardInfo.title || "بدون عنوان"}</h3>
-          <p class="subtitle">${cardInfo.subtitle || ""}</p>
+          <h3>${highlight(cardInfo.title || "بدون عنوان", searchQuery)}</h3>
+          <p class="subtitle">${highlight(cardInfo.subtitle || "", searchQuery)}</p>
           <p class="description">${
-            cardInfo.description || "توضیحی وجود ندارد."
+            highlight(cardInfo.description || "توضیحی وجود ندارد.", searchQuery)
           }</p>
         </div>
         <div class="card-actions">
           <a href="${
-            cardInfo.visitLink || "#"
+            cardInfo.visitLink || cardInfo.url || "#"
           }" class="btn outline" target="_blank" rel="noopener noreferrer">
             <i class="fas fa-globe"></i> مشاهده
           </a>
           <a href="${
-            cardInfo.detailsLink || "#"
+            cardInfo.detailsLink || cardInfo.url || "#"
           }" class="btn" target="_blank" rel="noopener noreferrer">
             <i class="fas fa-info-circle"></i> جزئیات
           </a>
@@ -100,40 +172,36 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     const imageDiv = cardElement.querySelector(".card-image");
+    const favButton = cardElement.querySelector(".fav-btn");
 
-    // Attempt to load website screenshot if visitLink is a valid URL
-    // Otherwise, use icon
-    if (
-      cardInfo.visitLink &&
-      (cardInfo.visitLink.startsWith("http://") ||
-        cardInfo.visitLink.startsWith("https://"))
-    ) {
-      const img = document.createElement("img");
-      // Using WordPress mShots service for screenshots. Adjust dimensions as needed.
-      img.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(
-        cardInfo.visitLink,
-      )}?w=300&h=180`;
-      img.alt = `پیش‌نمایش ${cardInfo.title || "سایت"}`;
-      // Styling for the image to fit the container
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover"; // Ensures the image covers the area, might crop
+    favButton.addEventListener("click", () => {
+      if (favorites.has(cardInfo.url)) {
+        favorites.delete(cardInfo.url);
+        favButton.classList.remove("active");
+        favButton.querySelector("i").classList.replace("fas", "far");
+      } else {
+        favorites.add(cardInfo.url);
+        favButton.classList.add("active");
+        favButton.querySelector("i").classList.replace("far", "fas");
+      }
+      localStorage.setItem(
+        "favoriteCardsALDMC",
+        JSON.stringify(Array.from(favorites)),
+      );
+    });
 
-      img.onerror = () => {
-        // Fallback to icon if image fails to load
-        imageDiv.innerHTML = `<i class="${
-          cardInfo.icon || "fas fa-link"
-        } fa-3x"></i>`;
-      };
-      imageDiv.innerHTML = ""; // Clear any default content
-      imageDiv.appendChild(img);
-    } else if (cardInfo.icon) {
-      // If no valid visitLink for screenshot, use the provided icon
-      imageDiv.innerHTML = `<i class="${cardInfo.icon} fa-3x"></i>`;
-    } else {
-      // Default fallback icon if no visitLink and no specific icon
-      imageDiv.innerHTML = `<i class="fas fa-image fa-3x"></i>`;
-    }
+    /*
+     * Previous logic attempted to fetch a screenshot of the linked website
+     * using the service at s.wordpress.com/mshots. That code has been
+     * commented out so thumbnails no longer depend on external URLs.
+     */
+
+    const img = document.createElement("img");
+    img.dataset.src = "Images/Icon.png"; // static placeholder thumbnail
+    img.alt = cardInfo.title || "thumbnail";
+    imageDiv.innerHTML = "";
+    imageDiv.appendChild(img);
+    observer.observe(img);
 
     return cardElement;
   }
@@ -147,21 +215,33 @@ document.addEventListener("DOMContentLoaded", () => {
       cardContainer.innerHTML = "";
       const fragment = document.createDocumentFragment();
 
-      const filteredData = allCardsData.filter((card) => {
+      let filteredData = allCardsData.filter((card) => {
+        const cardCat = card.category ? card.category.trim() : "General";
         const categoryMatch =
-          filterCategory === "All" || card.category === filterCategory;
+          filterCategory === "All" ||
+          (filterCategory === "Favorites"
+            ? favorites.has(card.url)
+            : cardCat === filterCategory);
         const text =
           `${card.title || ""} ${card.subtitle || ""} ${card.description || ""}`.toLowerCase();
         const searchMatch = text.includes(searchQuery.toLowerCase());
         return categoryMatch && searchMatch;
       });
 
+      if (filterCategory === "All") {
+        filteredData = filteredData.sort((a, b) => {
+          const aFav = favorites.has(a.url) ? -1 : 1;
+          const bFav = favorites.has(b.url) ? -1 : 1;
+          return aFav - bFav;
+        });
+      }
+
       if (filteredData.length === 0) {
         cardContainer.innerHTML =
           '<p class="no-results">موردی برای نمایش یافت نشد.</p>';
       } else {
         filteredData.forEach((cardInfo) => {
-          fragment.appendChild(createCardElement(cardInfo));
+          fragment.appendChild(createCardElement(cardInfo, searchQuery));
         });
         cardContainer.appendChild(fragment);
       }
@@ -190,9 +270,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (searchInput) {
-    searchInput.addEventListener("input", () => {
+    const handleSearch = debounce(() => {
       renderCards(currentCategory, searchInput.value);
-    });
+    }, 300);
+    searchInput.addEventListener("input", handleSearch);
   }
 
   // =================== INITIAL DATA FETCH & RENDER ===================
@@ -205,25 +286,30 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
       allCardsData = await response.json();
-
-      if (!Array.isArray(allCardsData)) {
-        console.error("فرمت داده‌های دریافتی صحیح نیست. انتظار آرایه می‌رفت.");
-        allCardsData = [];
-        cardContainer.innerHTML =
-          '<p class="error-message">خطا در بارگذاری اطلاعات کارت‌ها. لطفاً بعداً تلاش کنید.</p>';
+    } catch (error) {
+      console.error("خطا در خواندن فایل JSON:", error);
+      if (window.cardsData) {
+        allCardsData = window.cardsData;
+      } else {
+        if (cardContainer) {
+          cardContainer.innerHTML =
+            '<p class="error-message">متاسفانه مشکلی در بارگذاری اطلاعات پیش آمده است.</p>';
+        }
         return;
       }
-
-      const categories = getUniqueCategories(allCardsData);
-      renderCategoryTabs(categories);
-      renderCards(currentCategory, searchInput ? searchInput.value : "");
-    } catch (error) {
-      console.error("خطا در مقداردهی اولیه برنامه:", error);
-      if (cardContainer) {
-        cardContainer.innerHTML =
-          '<p class="error-message">متاسفانه مشکلی در بارگذاری اطلاعات پیش آمده است.</p>';
-      }
     }
+
+    if (!Array.isArray(allCardsData)) {
+      console.error("فرمت داده‌های دریافتی صحیح نیست. انتظار آرایه می‌رفت.");
+      allCardsData = [];
+      cardContainer.innerHTML =
+        '<p class="error-message">خطا در بارگذاری اطلاعات کارت‌ها. لطفاً بعداً تلاش کنید.</p>';
+      return;
+    }
+
+    const categories = getUniqueCategories(allCardsData);
+    renderCategoryTabs(categories);
+    renderCards(currentCategory, searchInput ? searchInput.value : "");
   }
 
   initializeApp();

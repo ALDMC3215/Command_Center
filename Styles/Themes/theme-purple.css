@@ -1,0 +1,18 @@
+:root {
+  --primary: #9c27b0;
+  --primary-dark: #7b1fa2;
+  --primary-rgb: 156, 39, 176;
+  --background: #f5e6ff;
+  --header-bg: #4a148c;
+  --text: #222;
+  --text-light: #f3e5f5;
+  --card-bg: #fff;
+  --card-border: #dec4f4;
+  --card-image-bg: #f3e5f5;
+  --dropdown-bg: white;
+  --dropdown-text: #222;
+  --category-bg: #ead3f9;
+  --category-border: #d8b5ef;
+  --card-glow: rgba(156, 39, 176, 0.07);
+  --card-glow-hover: rgba(156, 39, 176, 0.33);
+}
