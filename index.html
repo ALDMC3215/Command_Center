@@ -13,72 +13,79 @@
 </head>
 
 <body>
-    <!-- ========== HEADER: OUTSIDE WRAPPER ========== -->
-    <header>
-      <div class="top-bar">
-        <div class="Container_Left">
-          <img id="Logo" src="Images/Logo White.svg" alt="Logo" />
-          <h1 id="title">Command Center</h1>
-        </div>
-        <div class="Container_Right">
-          <nav>
-            <ul>
-              <li><a href="index.html">Home</a></li>
-              <li><a href="About.html">About</a></li>
-              <li><a href="Contact.html">Contact</a></li>
-              <li><a href="Login.html">Login</a></li>
-              <li>
-                <button id="toggle-theme" class="btn outline">Toggle Theme</button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+  <!-- ========== HEADER: OUTSIDE WRAPPER ========== -->
+  <header>
+    <div class="top-bar">
+      <div class="Container_Left">
+        <img id="Logo" src="Images/Logo White.svg" alt="Logo" />
+        <h1 id="title">Command Center</h1>
       </div>
-      <div class="category-bar">
-        <div id="categoryTabs"></div>
+      <div class="Container_Right">
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="About.html">About</a></li>
+            <li><a href="Contact.html">Contact</a></li>
+            <li><a href="Login.html">Login</a></li>
+            <li>
+              <button id="toggle-theme" class="btn outline">Toggle Theme</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== WRAPPER: ALL SCROLLABLE CONTENT ========== -->
+  <div id="smooth-wrapper">
+    <div class="content-wrapper">
+      <aside class="category-sidebar">
         <input
           type="text"
           id="searchInput"
           class="search-input"
           placeholder="Search..."
         />
+        <div id="categoryTabs"></div>
         <button id="addCardBtn" class="btn">Add Card</button>
-      </div>
-    </header>
-    <!-- ========== WRAPPER: ALL SCROLLABLE CONTENT ========== -->
-    <div id="smooth-wrapper">
+      </aside>
+
       <main>
         <section class="grid-section">
           <div class="card-grid" id="cardContainer"></div>
         </section>
       </main>
-
-      <div id="themeOverlay"></div>
-      <div id="themeMenu" class="theme-menu"></div>
-      <div id="addCardOverlay" class="modal-overlay">
-        <div class="modal">
-          <h2>Add Card</h2>
-          <form id="addCardForm">
-            <label>
-              Title
-              <input type="text" name="title" required />
-            </label>
-            <label>
-              URL
-              <input type="url" name="url" required />
-            </label>
-            <div class="modal-actions">
-              <button type="button" id="cancelAddCard" class="btn outline">
-                Cancel
-              </button>
-              <button type="submit" class="btn">Save</button>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
 
-    <script src="Scripts/index_script.js"></script>
+    <div id="themeOverlay"></div>
+    <div id="themeMenu" class="theme-menu"></div>
+
+    <!-- Add Card Modal -->
+    <div id="addCardOverlay" class="modal-overlay">
+      <div class="modal">
+        <h2>Add Card</h2>
+        <form id="addCardForm">
+          <label>
+            Title
+            <input type="text" name="title" required />
+          </label>
+          <label>
+            URL
+            <input type="url" name="url" required />
+          </label>
+          <div class="modal-actions">
+            <button type="button" id="cancelAddCard" class="btn outline">
+              Cancel
+            </button>
+            <button type="submit" class="btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="Scripts/index_script.js"></script>
 </body>
+
 
 </html>
