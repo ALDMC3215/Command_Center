@@ -86,12 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="card-actions">
           <a href="${
-            cardInfo.visitLink || "#"
+            cardInfo.visitLink || cardInfo.url || "#"
           }" class="btn outline" target="_blank" rel="noopener noreferrer">
             <i class="fas fa-globe"></i> مشاهده
           </a>
           <a href="${
-            cardInfo.detailsLink || "#"
+            cardInfo.detailsLink || cardInfo.url || "#"
           }" class="btn" target="_blank" rel="noopener noreferrer">
             <i class="fas fa-info-circle"></i> جزئیات
           </a>
@@ -103,15 +103,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Attempt to load website screenshot if visitLink is a valid URL
     // Otherwise, use icon
+    const siteUrl = cardInfo.visitLink || cardInfo.url;
     if (
-      cardInfo.visitLink &&
-      (cardInfo.visitLink.startsWith("http://") ||
-        cardInfo.visitLink.startsWith("https://"))
+      siteUrl &&
+      (siteUrl.startsWith("http://") || siteUrl.startsWith("https://"))
     ) {
       const img = document.createElement("img");
       // Using WordPress mShots service for screenshots. Adjust dimensions as needed.
       img.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(
-        cardInfo.visitLink,
+        siteUrl,
       )}?w=300&h=180`;
       img.alt = `پیش‌نمایش ${cardInfo.title || "سایت"}`;
       // Styling for the image to fit the container

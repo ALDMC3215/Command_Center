@@ -1,3 +1,29 @@
+/* ===== FONTS ===== */
+@font-face {
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* ===== RESET & BASE ===== */
 * {
   margin: 0;
@@ -30,7 +56,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 60px;
-  background-color: var(--header-bg);
+  background: linear-gradient(135deg, var(--header-bg), var(--primary-dark));
   color: var(--text-light);
   height: 90px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -50,7 +76,7 @@ header.header-scrolled {
   height: 70px;
   padding-top: 0;
   padding-bottom: 0;
-  background-color: var(--header-bg);
+  background: linear-gradient(135deg, var(--header-bg), var(--primary-dark));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -166,11 +192,13 @@ header.header-scrolled #title {
   font-size: 1rem;
   outline: none;
   width: 220px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .search-input:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
 }
 
 .category-tab {
