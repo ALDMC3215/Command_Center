@@ -15,4 +15,6 @@
   --category-border: #cde8cf;
   --card-glow: rgba(76, 175, 80, 0.07);
   --card-glow-hover: rgba(76, 175, 80, 0.33);
+  --gradient-start: #a8ff78;
+  --gradient-end: #78ffd6;
 }

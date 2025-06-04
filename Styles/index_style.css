@@ -1,13 +1,25 @@
 /* ===== FONTS ===== */
 @font-face {
-  font-family: "Inter";
-  src: url("../Fonts/Inter-Regular-slnt=0.ttf") format("truetype");
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: "Inter";
-  src: url("../Fonts/Inter-Bold-slnt=0.ttf") format("truetype");
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../Fonts/Quicksand-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
@@ -17,7 +29,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+  font-family: "Quicksand", sans-serif;
 }
 
 html,
@@ -47,8 +59,8 @@ header {
   z-index: 1000;
   background: radial-gradient(
     circle at top left,
-    var(--primary-dark),
-    var(--header-bg)
+    var(--gradient-start),
+    var(--gradient-end)
   );
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -60,8 +72,8 @@ header {
   padding: 0 60px;
   background: radial-gradient(
     circle at top left,
-    var(--primary-dark),
-    var(--header-bg)
+    var(--gradient-start),
+    var(--gradient-end)
   );
   color: var(--text-light);
   height: 90px;
@@ -71,7 +83,7 @@ header.header-scrolled {
   height: 70px;
   padding-top: 0;
   padding-bottom: 0;
-  background: linear-gradient(135deg, var(--header-bg), var(--primary-dark));
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -140,25 +152,23 @@ header.header-scrolled #title {
 #toggle-theme {
   font-size: 0.8rem;
   padding: 9px 18px;
-  background-color: transparent;
-  color: var(--text-light);
-  border: 1.5px solid var(--text-light);
-  border-radius: 25px;
+  background-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  color: #fff;
+  border: none;
+  border-radius: 30px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s;
   margin-left: 15px;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(var(--primary-rgb, 255, 111, 60), 0.4);
 }
 #toggle-theme:hover {
-  background-color: var(--primary);
-  color: white;
-  border-color: var(--primary);
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 5px 10px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
+  box-shadow: 0 6px 12px rgba(var(--primary-rgb, 255, 111, 60), 0.5);
 }
 #toggle-theme:active {
   transform: translateY(0px) scale(1);
-  box-shadow: 0 2px 5px rgba(var(--primary-rgb, 255, 111, 60), 0.2);
+  box-shadow: 0 2px 4px rgba(var(--primary-rgb, 255, 111, 60), 0.3);
 }
 /* =================== LAYOUT =================== */
 .content-wrapper {
@@ -279,17 +289,17 @@ main {
   padding: 30px 0;
 }
 
-/* =================== CARD GRID =================== */
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 40px;
+/* =================== CARD LIST =================== */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
   padding: 20px 0;
   opacity: 1;
   transition: opacity 0.2s cubic-bezier(0.6, 0, 0.3, 1);
 }
 
-.card-grid.animating {
+.card-list.animating {
   opacity: 0;
   pointer-events: none;
 }
@@ -308,10 +318,10 @@ main {
   border: 1px solid var(--card-border, #ddd);
   box-shadow: 0 8px 24px -4px var(--card-glow, rgba(0, 0, 0, 0.1));
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   overflow: hidden;
   width: 100%;
-  min-height: 400px;
+  min-height: 180px;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease,
     border-color 0.4s ease;
@@ -324,53 +334,34 @@ main {
 }
 
 .card-image {
-  height: 180px;
-  background-color: var(--card-image-bg);
+  width: 180px;
+  background-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-dark);
+  color: #fff;
   font-size: 2.5rem;
   overflow: hidden;
-  border-bottom: 1px solid var(--card-border);
-  position: relative;
 }
 .card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
+  display: none;
 }
 .fav-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.4);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 8px 16px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.fav-btn i {
-  pointer-events: none;
-}
-.fav-btn:hover {
-  background: var(--primary);
-}
+.fav-btn:hover,
 .fav-btn.active {
   background: var(--primary);
-}
-.fav-btn.active i {
   color: #fff;
-}
-.card:hover .card-image img {
-  transform: scale(1.05);
 }
 
 .card-content {
@@ -379,7 +370,7 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  text-align: right;
+  text-align: left;
 }
 .card-content h3 {
   font-size: 1.3rem;
@@ -560,7 +551,7 @@ main {
   main {
     padding: 20px 30px 30px 30px;
   }
-  .card-grid {
+  .card-list {
     gap: 30px;
   }
 }
@@ -641,8 +632,7 @@ main {
     font-size: 1rem;
   }
 
-  .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  .card-list {
     gap: 20px;
   }
   .card {
@@ -667,8 +657,7 @@ main {
 }
 
 @media (max-width: 480px) {
-  .card-grid {
-    grid-template-columns: 1fr;
+  .card-list {
     gap: 25px;
   }
   .card {
@@ -747,6 +736,15 @@ main {
   border: 1px solid var(--card-border);
   border-radius: 6px;
   font-size: 0.9rem;
+}
+.modal textarea {
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  resize: vertical;
 }
 .modal-actions {
   margin-top: 15px;
