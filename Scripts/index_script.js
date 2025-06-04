@@ -26,18 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          img.src = img.dataset.src;
-          observer.unobserve(img);
-        }
-      });
-    },
-    { rootMargin: "100px" }
-  );
 
   function highlight(text, query) {
     if (!query) return text;
@@ -71,6 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "blue", path: "Styles/Themes/theme-blue.css" },
     { name: "green", path: "Styles/Themes/theme-green.css" },
     { name: "purple", path: "Styles/Themes/theme-purple.css" },
+    { name: "teal", path: "Styles/Themes/theme-teal.css" },
+    { name: "orange", path: "Styles/Themes/theme-orange.css" },
   ];
   let currentThemeIndex = 0;
 
@@ -168,38 +158,27 @@ document.addEventListener("DOMContentLoaded", () => {
     // Basic structure with placeholders for image/icon
     cardElement.innerHTML = `
       <div class="card-image">
-        <button class="fav-btn" title="افزودن به علاقه‌مندی‌ها">
-          <i class="${favorites.has(cardInfo.url) ? "fas" : "far"} fa-star"></i>
-        </button>
+        <i class="${cardInfo.icon || 'fas fa-globe'}"></i>
       </div>
       <div class="card-content">
         <div>
           <h3>${highlight(cardInfo.title || "بدون عنوان", searchQuery)}</h3>
-          <p class="subtitle">${highlight(
-            cardInfo.subtitle || "",
-            searchQuery
-          )}</p>
           <p class="description">${highlight(
-            cardInfo.description || "توضیحی وجود ندارد.",
+            cardInfo.description || "",
             searchQuery
           )}</p>
         </div>
         <div class="card-actions">
-          <a href="${
-            cardInfo.visitLink || cardInfo.url || "#"
-          }" class="btn outline" target="_blank" rel="noopener noreferrer">
-            <i class="fas fa-globe"></i> مشاهده
-          </a>
-          <a href="${
-            cardInfo.detailsLink || cardInfo.url || "#"
-          }" class="btn" target="_blank" rel="noopener noreferrer">
-            <i class="fas fa-info-circle"></i> جزئیات
+          <button class="fav-btn ${favorites.has(cardInfo.url) ? 'active' : ''}">
+            <i class="${favorites.has(cardInfo.url) ? 'fas' : 'far'} fa-star"></i> Favorite
+          </button>
+          <a href="${cardInfo.url || '#'}" class="btn" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-external-link-alt"></i> Open
           </a>
         </div>
       </div>
     `;
 
-    const imageDiv = cardElement.querySelector(".card-image");
     const favButton = cardElement.querySelector(".fav-btn");
 
     favButton.addEventListener("click", () => {
@@ -218,40 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
 
-    const siteUrl = cardInfo.visitLink || cardInfo.url;
-    if (
-      siteUrl &&
-      (siteUrl.startsWith("http://") || siteUrl.startsWith("https://"))
-    ) {
-      const img = document.createElement("img");
-      img.dataset.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(
-        siteUrl
-      )}`;
-      img.alt = cardInfo.title || "thumbnail";
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover";
 
-      img.onerror = () => {
-        // fallback to icon
-        imageDiv.innerHTML = `<i class="${
-          cardInfo.icon || "fas fa-link"
-        } fa-3x"></i>`;
-      };
-
-      imageDiv.innerHTML = "";
-      imageDiv.appendChild(img);
-      observer.observe(img);
-    } else if (cardInfo.icon) {
-      imageDiv.innerHTML = `<i class="${cardInfo.icon} fa-3x"></i>`;
-    } else {
-      const img = document.createElement("img");
-      img.dataset.src = "Images/Icon.png";
-      img.alt = cardInfo.title || "thumbnail";
-      imageDiv.innerHTML = "";
-      imageDiv.appendChild(img);
-      observer.observe(img);
-    }
 
     return cardElement;
   }
@@ -343,11 +289,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(addCardForm);
       const title = formData.get("title").trim();
       const url = formData.get("url").trim();
+      const description = formData.get("description").trim();
       if (!title || !isValidUrl(url)) {
         alert("Please enter a valid title and URL");
         return;
       }
-      const newCard = { title, url };
+      const newCard = { title, url, description };
       try {
         const stored = JSON.parse(localStorage.getItem("cardsDataALDMC")) || [];
         stored.push(newCard);
@@ -363,13 +310,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =================== INITIAL DATA FETCH & RENDER ===================
+  const defaultCards = [
+    {
+      title: "OpenAI",
+      url: "https://openai.com",
+      description: "Artificial intelligence research lab"
+    },
+    {
+      title: "Mozilla",
+      url: "https://www.mozilla.org",
+      description: "Creators of the Firefox browser"
+    },
+    {
+      title: "Wikipedia",
+      url: "https://wikipedia.org",
+      description: "Free online encyclopedia"
+    }
+  ];
   async function initializeApp() {
     try {
       const stored = localStorage.getItem("cardsDataALDMC");
-      allCardsData = stored ? JSON.parse(stored) : [];
+      allCardsData = stored ? JSON.parse(stored) : defaultCards;
     } catch (error) {
       console.error("خطا در خواندن داده‌های ذخیره شده:", error);
-      allCardsData = [];
+      allCardsData = defaultCards;
     }
 
     const categories = getUniqueCategories(allCardsData);

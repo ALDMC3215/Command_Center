@@ -15,4 +15,6 @@
   --category-border: #23252e; /* ← خط border خیلی subtle و خفن */
   --card-glow: rgba(255, 111, 60, 0.11);
   --card-glow-hover: rgba(255, 170, 120, 0.42);
+  --gradient-start: #414345;
+  --gradient-end: #232526;
 }

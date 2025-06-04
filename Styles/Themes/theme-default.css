@@ -15,4 +15,6 @@
   --category-border: #d6dae3; /* ← خط border خیلی نرم، نزدیک به دسته‌بندی */
   --card-glow: rgba(255, 111, 60, 0.07); /* subtle shadow حالت عادی */
   --card-glow-hover: rgba(255, 111, 60, 0.33); /* glow روشن و قوی روی هاور */
+  --gradient-start: #ff9966;
+  --gradient-end: #ff5e62;
 }
