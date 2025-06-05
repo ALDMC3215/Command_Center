@@ -57,11 +57,7 @@ header {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: radial-gradient(
-    circle at top left,
-    var(--gradient-start),
-    var(--gradient-end)
-  );
+  background: var(--header-bg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -70,11 +66,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 60px;
-  background: radial-gradient(
-    circle at top left,
-    var(--gradient-start),
-    var(--gradient-end)
-  );
+  background: var(--header-bg);
   color: var(--text-light);
   height: 90px;
 }
@@ -95,11 +87,7 @@ header.header-scrolled {
   height: 70px;
   padding-top: 0;
   padding-bottom: 0;
-  background: linear-gradient(
-    135deg,
-    var(--gradient-start),
-    var(--gradient-end)
-  );
+  background: var(--header-bg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -226,6 +214,10 @@ header.header-scrolled #title {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+#addCardBtn {
+  display: none;
 }
 #toggle-theme {
   font-size: 0.8rem;

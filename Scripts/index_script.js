@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  /* Temporarily disable Add Card modal functions
   function openAddCardModal() {
     if (addCardOverlay) addCardOverlay.classList.add("show");
   }
@@ -52,16 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeAddCardModal() {
     if (addCardOverlay) addCardOverlay.classList.remove("show");
   }
+  */
 
   // =================== THEME SWITCHER ===================
   const themes = [
     { name: "default", path: "Styles/Themes/theme-default.css" },
-    { name: "dark", path: "Styles/Themes/theme-dark.css" },
-    { name: "blue", path: "Styles/Themes/theme-blue.css" },
-    { name: "green", path: "Styles/Themes/theme-green.css" },
-    { name: "purple", path: "Styles/Themes/theme-purple.css" },
-    { name: "teal", path: "Styles/Themes/theme-teal.css" },
-    { name: "orange", path: "Styles/Themes/theme-orange.css" },
   ];
   let currentThemeIndex = 0;
 
@@ -299,6 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", handleSearch);
   }
 
+  /*
   if (addCardBtn && addCardOverlay && addCardForm) {
     addCardBtn.addEventListener("click", openAddCardModal);
     cancelAddCard.addEventListener("click", closeAddCardModal);
@@ -332,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+  */
 
   // =================== INITIAL DATA FETCH & RENDER ===================
   const defaultCards = [
