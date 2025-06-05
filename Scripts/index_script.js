@@ -125,10 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener("click", (e) => {
-      if (
-        !projectsBtn.contains(e.target) &&
-        !projectsMenu.contains(e.target)
-      ) {
+      if (!projectsBtn.contains(e.target) && !projectsMenu.contains(e.target)) {
         projectsBtn.parentElement.classList.remove("show");
       }
     });
@@ -264,8 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (filteredData.length === 0) {
-        cardContainer.innerHTML =
-          '<p class="no-results">موردی برای نمایش یافت نشد.</p>';
+        cardContainer.innerHTML = '<p class="no-results">Nothing to Show</p>';
       } else {
         filteredData.forEach((cardInfo) => {
           fragment.appendChild(createCardElement(cardInfo, searchQuery));

@@ -47,7 +47,7 @@ body {
 
 #smooth-wrapper {
   width: 100%;
-  padding-top: 90px; /* Match header height */
+  padding-top: 90px;
 }
 
 /* ===== HEADER ===== */
@@ -618,32 +618,26 @@ main {
     gap: 30px;
   }
 }
-
 @media (max-width: 768px) {
-  /* --- MOBILE HEADER CHANGES --- */
   header {
-    position: static; /* هدر در موبایل دیگر ثابت نیست */
+    position: static;
     height: auto !important;
     flex-direction: column;
     padding: 15px 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* یک سایه ملایم برای هدر معمولی */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
-  /* کلاس header-scrolled دیگر تاثیری بر position یا height در موبایل ندارد */
   header.header-scrolled {
-    /* استایل‌های خاص اسکرول برای موبایل اگر نیاز بود، اینجا می‌آیند */
-    /* اما با position: static، بیشتر اینها دیگر اعمال نمی‌شوند */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* سایه ثابت می‌ماند */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   #smooth-wrapper {
-    padding-top: 0; /* چون هدر دیگر fixed نیست، نیازی به padding-top نیست */
+    padding-top: 0;
   }
-  /* --- END MOBILE HEADER CHANGES --- */
 
   .Container_Left {
     margin-bottom: 12px;
     text-align: center;
-  } /* لوگو و عنوان در مرکز */
+  }
   #Logo {
     height: 50px;
   }
