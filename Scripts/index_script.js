@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* Temporarily disable Add Card modal functions
   function openAddCardModal() {
     if (addCardOverlay) addCardOverlay.classList.add("show");
   }
@@ -53,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeAddCardModal() {
     if (addCardOverlay) addCardOverlay.classList.remove("show");
   }
-  */
 
   // =================== THEME SWITCHER ===================
   const themes = [
@@ -162,6 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Basic structure with placeholders for image/icon
     cardElement.innerHTML = `
+      <div class="card-options">
+        <button class="options-btn"><i class="fas fa-ellipsis-v"></i></button>
+        <ul class="options-menu">
+          <li class="remove-option">Remove</li>
+        </ul>
+      </div>
       <div class="card-image">
         <i class="${cardInfo.icon || "fas fa-globe"}"></i>
       </div>
@@ -186,15 +190,14 @@ document.addEventListener("DOMContentLoaded", () => {
           }" class="btn" target="_blank" rel="noopener noreferrer">
             <i class="fas fa-external-link-alt"></i> Open
           </a>
-          <button class="remove-btn">
-            <i class="fas fa-times"></i> Remove
-          </button>
         </div>
       </div>
     `;
 
     const favButton = cardElement.querySelector(".fav-btn");
-    const removeButton = cardElement.querySelector(".remove-btn");
+    const options = cardElement.querySelector(".card-options");
+    const optionsBtn = cardElement.querySelector(".options-btn");
+    const removeOption = cardElement.querySelector(".remove-option");
 
     favButton.addEventListener("click", () => {
       if (favorites.has(cardInfo.url)) {
@@ -212,7 +215,19 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
 
-    removeButton.addEventListener("click", () => {
+    optionsBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      options.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!options.contains(e.target)) {
+        options.classList.remove("show");
+      }
+    });
+
+    removeOption.addEventListener("click", () => {
+      options.classList.remove("show");
       allCardsData = allCardsData.filter((c) => c.url !== cardInfo.url);
       localStorage.setItem("cardsDataALDMC", JSON.stringify(allCardsData));
       renderCards(currentCategory, searchInput ? searchInput.value : "");
@@ -257,7 +272,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (filteredData.length === 0) {
-        cardContainer.innerHTML = '<p class="no-results">Nothing to Show</p>';
+        const btn = document.createElement("button");
+        btn.id = "emptyAddCardBtn";
+        btn.className = "add-card-empty";
+        btn.textContent = "Add Card";
+        cardContainer.appendChild(btn);
+        btn.addEventListener("click", openAddCardModal);
       } else {
         filteredData.forEach((cardInfo) => {
           fragment.appendChild(createCardElement(cardInfo, searchQuery));
@@ -295,9 +315,13 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", handleSearch);
   }
 
-  /*
   if (addCardBtn && addCardOverlay && addCardForm) {
-    addCardBtn.addEventListener("click", openAddCardModal);
+    const attachModalListeners = (btn) => {
+      if (btn) btn.addEventListener("click", openAddCardModal);
+    };
+
+    attachModalListeners(addCardBtn);
+
     cancelAddCard.addEventListener("click", closeAddCardModal);
     addCardOverlay.addEventListener("click", (e) => {
       if (e.target === addCardOverlay) {
@@ -309,13 +333,17 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const formData = new FormData(addCardForm);
       const title = formData.get("title").trim();
-      const url = formData.get("url").trim();
+      let url = formData.get("url").trim();
       const description = formData.get("description").trim();
+      const category = formData.get("category").trim();
       if (!title || !isValidUrl(url)) {
         alert("Please enter a valid title and URL");
         return;
       }
-      const newCard = { title, url, description };
+      if (!url.startsWith("http")) {
+        url = `https://${url}`;
+      }
+      const newCard = { title, url, description, category };
       try {
         const stored = JSON.parse(localStorage.getItem("cardsDataALDMC")) || [];
         stored.push(newCard);
@@ -329,7 +357,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-  */
 
   // =================== INITIAL DATA FETCH & RENDER ===================
   const defaultCards = [
