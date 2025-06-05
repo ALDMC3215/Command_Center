@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Enhanced Interactive 3D Globe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Simple icon library for UI elements -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #000000;
+            color: #e5e7eb;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #60a5fa;
+            /* Light blue */
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #globeContainer {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .controls-panel {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(10, 15, 25, 0.85);
+            /* Even darker, more space-like */
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            max-width: 340px;
+            max-height: calc(100vh - 30px);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(100, 116, 139, 0.4);
+            /* Slate border */
+        }
+
+        .controls-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid rgba(100, 116, 139, 0.3);
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .controls-panel-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            /* Lighter Slate */
+            display: flex;
+            align-items: center;
+        }
+
+        .controls-panel-header h2 i {
+            margin-right: 8px;
+            color: #60a5fa;
+            /* Light blue icon */
+        }
+
+        #controlsContent {
+            overflow-y: auto;
+            flex-grow: 1;
+            transition: max-height 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s ease-in-out;
+            max-height: 1000px;
+            opacity: 1;
+        }
+
+        #controlsContent.hidden {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            margin-top: -10px;
+        }
+
+        .control-group {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .controls-panel label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #94a3b8;
+            /* Slate 400 */
+            text-transform: uppercase;
+        }
+
+        .controls-panel label i {
+            margin-right: 6px;
+            width: 14px;
+            /* Ensure icon alignment */
+            text-align: center;
+        }
+
+        .controls-panel input[type="color"],
+        .controls-panel input[type="range"],
+        .controls-panel button {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #475569;
+            /* Slate 600 */
+            background-color: #1e293b;
+            /* Slate 800 */
+            color: #e2e8f0;
+            /* Slate 200 */
+            box-sizing: border-box;
+            font-size: 0.85rem;
+        }
+
+        .controls-panel input[type="color"] {
+            height: 38px;
+            padding: 4px;
+        }
+
+        .controls-panel input[type="range"] {
+            accent-color: #60a5fa;
+        }
+
+        /* Slider track color */
+
+        .controls-panel button {
+            background-color: #3b82f6;
+            /* Blue 500 */
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .controls-panel button i {
+            margin-right: 8px;
+        }
+
+        .controls-panel button:hover {
+            background-color: #2563eb;
+            /* Blue 600 */
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .controls-panel button:active {
+            transform: translateY(1px);
+        }
+
+        .controls-panel button.gemini-button {
+            background-color: #10b981;
+            /* Emerald 500 */
+        }
+
+        .controls-panel button.gemini-button:hover {
+            background-color: #059669;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .controls-panel button.control-button {
+            background-color: #64748b;
+            /* Slate 500 */
+        }
+
+        .controls-panel button.control-button:hover {
+            background-color: #475569;
+            box-shadow: 0 0 10px rgba(100, 116, 139, 0.5);
+        }
+
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            /* Start off-screen */
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 0.875rem;
+            max-width: calc(100% - 40px);
+            text-align: center;
+        }
+
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #geminiInfoPanel {
+            border-top: 1px solid rgba(100, 116, 139, 0.3);
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        #geminiInfoPanel h3 {
+            color: #94a3b8;
+            /* Slate 400 */
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        #geminiInfoPanel h3 i {
+            margin-right: 6px;
+            color: #10b981;
+        }
+
+        #geminiResponseText {
+            min-height: 50px;
+            background-color: rgba(10, 15, 25, 0.6);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #cbd5e1;
+            /* Slate 300 */
+            border: 1px solid #334155;
+            /* Slate 700 */
+        }
+
+        .icon-button svg {
+            width: 1rem;
+            height: 1rem;
+            color: #94a3b8;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .icon-button:hover svg {
+            color: #e2e8f0;
+            transform: scale(1.1);
+        }
+
+        #togglePanelButton svg.hidden {
+            display: none;
+        }
+
+        .clickable-globe-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(10, 15, 25, 0.85);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            z-index: 5;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p id="loadingStatus">Initializing Hyper Globe...</p>
+    </div>
+
+    <div id="globeContainer"></div>
+
+    <div class="controls-panel">
+        <div class="controls-panel-header" id="togglePanelHeader">
+            <h2><i class="fas fa-sliders-h"></i>Globe Controls</h2>
+            <button id="togglePanelButton" class="p-1.5 rounded-md hover:bg-slate-700 focus:outline-none icon-button"
+                title="Toggle Controls Panel">
+                <svg id="panelIconMinimize" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="3" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                </svg>
+                <svg id="panelIconExpand" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="3" stroke="currentColor" class="hidden">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="controlsContent">
+            <div class="control-group">
+                <label for="toggleRotationButton"><i class="fas fa-sync-alt"></i>Rotation</label>
+                <button id="toggleRotationButton" class="control-button"><i class="fas fa-pause"></i>Pause
+                    Rotation</button>
+                <label for="rotationSpeed"><i class="fas fa-tachometer-alt"></i>Speed</label>
+                <input type="range" id="rotationSpeed" min="0" max="2" step="0.05" value="0.15">
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-lightbulb"></i>Lighting & Scene</label>
+                <label for="ambientLightColor" class="sub-label"><i class="fas fa-adjust"></i>Ambient Color</label>
+                <input type="color" id="ambientLightColor" value="#dddddd">
+                <label for="ambientLightIntensity" class="sub-label"><i class="fas fa-sun"></i>Ambient Intensity</label>
+                <input type="range" id="ambientLightIntensity" min="0" max="2" step="0.05" value="0.4">
+                <label for="sunIntensity" class="sub-label"><i class="fas fa-sun"></i>Sun Intensity</label>
+                <input type="range" id="sunIntensity" min="0" max="3" step="0.1" value="1.2">
+                <button id="toggleSunButton" class="control-button"><i class="fas fa-eye"></i>Toggle Sun
+                    Visibility</button>
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-globe-americas"></i>Earth Features</label>
+                <label for="bumpScale"><i class="fas fa-mountain"></i>Terrain Detail (Texture Dependent)</label>
+                <input type="range" id="bumpScale" min="0" max="15" step="0.5" value="0.0" disabled>
+                <button id="toggleCloudsButton" class="control-button"><i class="fas fa-cloud"></i>Toggle
+                    Clouds</button>
+                <button id="toggleAtmosphereButton" class="control-button"><i class="fas fa-atom"></i>Toggle
+                    Atmosphere</button>
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-map-marker-alt"></i>Markers & Info</label>
+                <button id="addRandomMarkerButton"><i class="fas fa-map-pin"></i>Add Random Marker</button>
+                <button id="getMarkerInfoButton" class="gemini-button hidden"><i class="fas fa-info-circle"></i>Get Info
+                    (Selected)</button>
+                <div id="clickedCoordsDisplay" class="text-xs text-slate-400 my-2 p-2 bg-slate-700 rounded hidden">
+                    Selected: Lat <span id="selectedLat">N/A</span>, Lon <span id="selectedLon">N/A</span>
+                </div>
+            </div>
+
+            <div id="geminiInfoPanel" class="hidden">
+                <h3><i class="fas fa-brain"></i>Location Insights</h3>
+                <div id="geminiLoadingIndicator" class="text-center p-3 hidden">
+                    <svg class="animate-spin h-5 w-5 text-emerald-400 mx-auto" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <p class="text-xs text-emerald-300 mt-1">Fetching insights...</p>
+                </div>
+                <p id="geminiResponseText"></p>
+            </div>
+            <button id="resetViewButton" class="mt-2"><i class="fas fa-undo"></i>Reset View</button>
+        </div>
+    </div>
+    <div id="clickableGlobeInfo" class="clickable-globe-info hidden">Click on the globe to select a location.</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script type="module">
+        // --- Global Variables and Setup ---
+        let scene, camera, renderer, globe, controls, ambientLight, directionalLight, sunMesh;
+        let cloudMesh, atmosphereMesh, starField;
+        let lastMarkerCoords = null, clickedEarthCoords = null;
+        const globeContainer = document.getElementById('globeContainer');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingStatus = document.getElementById('loadingStatus');
+        const initialCameraPosition = new THREE.Vector3(0, 20, 220);
+
+        const EARTH_RADIUS = 100;
+        const CLOUD_ALTITUDE = 1.2;
+        const ATMOSPHERE_THICKNESS = 10;
+        const SUN_DISTANCE = 800;
+
+        let textureLoader, raycaster, mouse;
+        let totalAssetsToAttempt = 0;
+        let assetsAttempted = 0;
+        let loadingTimeout;
+
+        // UI Elements
+        const getMarkerInfoButton = document.getElementById('getMarkerInfoButton');
+        const geminiInfoPanel = document.getElementById('geminiInfoPanel');
+        const geminiResponseText = document.getElementById('geminiResponseText');
+        const geminiLoadingIndicator = document.getElementById('geminiLoadingIndicator');
+        const toggleRotationButton = document.getElementById('toggleRotationButton');
+        const controlsContent = document.getElementById('controlsContent');
+        const togglePanelButton = document.getElementById('togglePanelButton');
+        const panelIconMinimize = document.getElementById('panelIconMinimize');
+        const panelIconExpand = document.getElementById('panelIconExpand');
+        const togglePanelHeader = document.getElementById('togglePanelHeader');
+        const clickedCoordsDisplay = document.getElementById('clickedCoordsDisplay');
+        const selectedLatText = document.getElementById('selectedLat');
+        const selectedLonText = document.getElementById('selectedLon');
+        const clickableGlobeInfo = document.getElementById('clickableGlobeInfo');
+        const bumpScaleSlider = document.getElementById('bumpScale');
+
+        // --- Asset Loading Manager ---
+        function assetAttemptFinished(name, success = true) {
+            assetsAttempted++;
+            loadingStatus.textContent = `Loading ${name}... (${assetsAttempted}/${totalAssetsToAttempt})${success ? '' : ' - FAILED (Using Default)'}`;
+            if (assetsAttempted >= totalAssetsToAttempt) {
+                clearTimeout(loadingTimeout);
+                if (!loadingOverlay.classList.contains('hidden')) {
+                    loadingOverlay.classList.add('hidden');
+                    clickableGlobeInfo.classList.remove('hidden');
+                    showMessage("Hyper Globe Ready! Some textures might be placeholders.", "success", 5000);
+                }
+            }
+        }
+
+        function loadOptionalTexture(url, name, materialToUpdate, mapType = 'map', onLoadSuccessCallback = () => { }) {
+            totalAssetsToAttempt++;
+            textureLoader.load(url,
+                (texture) => {
+                    console.log(`${name} loaded successfully from ${url}.`);
+                    if (materialToUpdate) {
+                        materialToUpdate[mapType] = texture;
+                        if (mapType === 'bumpMap' && bumpScaleSlider) {
+                            bumpScaleSlider.disabled = false;
+                            bumpScaleSlider.value = globe.material.bumpScale || 5.0; // Set initial value if map loads
+                        }
+                        materialToUpdate.needsUpdate = true;
+                    }
+                    assetAttemptFinished(name, true);
+                    onLoadSuccessCallback(texture);
+                },
+                undefined,
+                (err) => {
+                    console.error(`Error loading ${name} from ${url}:`, err);
+                    assetAttemptFinished(name, false);
+                    showMessage(`Texture ${name} failed. Using default.`, "warning", 3000);
+                    if (mapType === 'bumpMap' && bumpScaleSlider) bumpScaleSlider.disabled = true;
+                    onLoadSuccessCallback(null); // Indicate failure
+                }
+            );
+        }
+
+        // --- Initialization ---
+        function init() {
+            loadingStatus.textContent = "Initializing scene...";
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(55, globeContainer.clientWidth / globeContainer.clientHeight, 0.1, SUN_DISTANCE * 2.5);
+            camera.position.copy(initialCameraPosition);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            globeContainer.appendChild(renderer.domElement);
+
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Lighting
+            ambientLight = new THREE.AmbientLight(document.getElementById('ambientLightColor').value, parseFloat(document.getElementById('ambientLightIntensity').value));
+            scene.add(ambientLight);
+
+            directionalLight = new THREE.DirectionalLight(0xffffff, parseFloat(document.getElementById('sunIntensity').value));
+            directionalLight.position.set(-SUN_DISTANCE, SUN_DISTANCE / 2, SUN_DISTANCE / 3);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            directionalLight.shadow.camera.near = SUN_DISTANCE / 2;
+            directionalLight.shadow.camera.far = SUN_DISTANCE * 2;
+            directionalLight.shadow.camera.left = -EARTH_RADIUS * 1.5;
+            directionalLight.shadow.camera.right = EARTH_RADIUS * 1.5;
+            directionalLight.shadow.camera.top = EARTH_RADIUS * 1.5;
+            directionalLight.shadow.camera.bottom = -EARTH_RADIUS * 1.5;
+            scene.add(directionalLight);
+
+            // Sun Mesh (visual representation)
+            const sunGeometry = new THREE.SphereGeometry(30, 32, 32);
+            const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffddaa, fog: false });
+            sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+            sunMesh.position.copy(directionalLight.position);
+            scene.add(sunMesh);
+
+            textureLoader = new THREE.TextureLoader();
+
+            // Starry Background - Default to solid color
+            const starGeometry = new THREE.SphereGeometry(SUN_DISTANCE * 1.2, 64, 64);
+            const starMaterial = new THREE.MeshBasicMaterial({ color: 0x0A0A1A, side: THREE.BackSide, fog: false, depthWrite: false });
+            starField = new THREE.Mesh(starGeometry, starMaterial);
+            loadOptionalTexture('https://threejs.org/examples/textures/eso_dark.jpg', 'Starfield', starMaterial);
+            scene.add(starField);
+
+            // Globe - Default to solid color
+            const globeGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 128, 128);
+            const globeMaterial = new THREE.MeshPhongMaterial({
+                color: 0x3B82F6, // Default blue color
+                shininess: 10,
+                transparent: false,
+                depthWrite: true
+            });
+            loadOptionalTexture('https://threejs.org/examples/textures/earth_atmos_2048.jpg', 'Earth Color Map', globeMaterial, 'map');
+            loadOptionalTexture('https://threejs.org/examples/textures/earth_topology_512.jpg', 'Earth Bump Map', globeMaterial, 'bumpMap');
+            loadOptionalTexture('https://threejs.org/examples/textures/earth_specular_2048.jpg', 'Earth Specular Map', globeMaterial, 'specularMap');
+
+            globe = new THREE.Mesh(globeGeometry, globeMaterial);
+            globe.receiveShadow = true;
+            globe.castShadow = true;
+            scene.add(globe);
+
+            // Cloud Layer - Default to semi-transparent color
+            const cloudGeometry = new THREE.SphereGeometry(EARTH_RADIUS + CLOUD_ALTITUDE, 128, 128);
+            const cloudMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.25,
+                blending: THREE.NormalBlending,
+                depthWrite: false,
+            });
+            loadOptionalTexture('https://threejs.org/examples/textures/earth_clouds_1024.png', 'Clouds', cloudMaterial, 'map', (texture) => {
+                if (texture) {
+                    cloudMaterial.opacity = 0.35;
+                    cloudMaterial.alphaTest = 0.05;
+                }
+            });
+            cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+            cloudMesh.receiveShadow = true;
+            scene.add(cloudMesh);
+
+            // Atmospheric Glow (Fresnel-like)
+            const atmosphereGeometry = new THREE.SphereGeometry(EARTH_RADIUS + ATMOSPHERE_THICKNESS, 128, 128);
+            const atmosphereMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    "c": { value: 0.1 },
+                    "p": { value: 2.5 },
+                    glowColor: { value: new THREE.Color(0x60a5fa) },
+                    viewVector: { value: camera.position }
+                },
+                vertexShader: `
+                    uniform vec3 viewVector;
+                    uniform float c;
+                    uniform float p;
+                    varying float intensity;
+                    void main() {
+                        vec3 vNormal = normalize( normalMatrix * normal );
+                        vec3 vNormCam = normalize( cameraPosition - position ); 
+                        intensity = pow( c + dot(vNormal, vNormCam), p ); 
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 glowColor;
+                    varying float intensity;
+                    void main() {
+                        float alpha = clamp(intensity, 0.0, 0.6); 
+                        gl_FragColor = vec4( glowColor, alpha );
+                    }
+                `,
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                depthWrite: false
+            });
+            atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+            scene.add(atmosphereMesh);
+
+            // OrbitControls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.03;
+            controls.minDistance = EARTH_RADIUS + 10;
+            controls.maxDistance = SUN_DISTANCE * 0.8;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = parseFloat(document.getElementById('rotationSpeed').value);
+            controls.target.set(0, 0, 0);
+
+            // Event Listeners
+            setupEventListeners();
+
+            // Initial UI state
+            updateRotationButtonText();
+            panelIconMinimize.classList.remove('hidden');
+            panelIconExpand.classList.add('hidden');
+            controlsContent.classList.remove('hidden');
+
+            // Safety timeout for loading overlay
+            if (totalAssetsToAttempt === 0) {
+                assetAttemptFinished("Core Scene (No Textures)", true);
+            } else {
+                loadingTimeout = setTimeout(() => {
+                    if (!loadingOverlay.classList.contains('hidden')) {
+                        loadingOverlay.classList.add('hidden');
+                        clickableGlobeInfo.classList.remove('hidden');
+                        showMessage("Globe is ready. Some visual assets might be missing due to loading issues.", "warning", 7000);
+                        console.warn("Loading overlay timed out. Some assets may not have loaded.");
+                    }
+                }, 5000); // Shortened timeout as we expect failures quickly
+            }
+
+            animate();
+        }
+
+        function setupEventListeners() {
+            // Panel Controls
+            document.getElementById('ambientLightColor').addEventListener('input', (event) => ambientLight.color.set(event.target.value));
+            document.getElementById('ambientLightIntensity').addEventListener('input', (event) => ambientLight.intensity = parseFloat(event.target.value));
+            document.getElementById('sunIntensity').addEventListener('input', (event) => directionalLight.intensity = parseFloat(event.target.value));
+            bumpScaleSlider.addEventListener('input', (event) => {
+                if (globe && globe.material && globe.material.bumpMap) {
+                    globe.material.bumpScale = parseFloat(event.target.value);
+                }
+            });
+            document.getElementById('rotationSpeed').addEventListener('input', (event) => { if (controls) controls.autoRotateSpeed = parseFloat(event.target.value); });
+
+            document.getElementById('toggleRotationButton').addEventListener('click', handleToggleRotation);
+            document.getElementById('toggleSunButton').addEventListener('click', () => { if (sunMesh) sunMesh.visible = !sunMesh.visible; directionalLight.visible = sunMesh.visible; showMessage(`Sun visibility ${sunMesh.visible ? 'ON' : 'OFF'}.`, "info"); });
+            document.getElementById('toggleCloudsButton').addEventListener('click', () => { if (cloudMesh) cloudMesh.visible = !cloudMesh.visible; showMessage(`Clouds ${cloudMesh.visible ? 'ON' : 'OFF'}.`, "info"); });
+            document.getElementById('toggleAtmosphereButton').addEventListener('click', () => { if (atmosphereMesh) atmosphereMesh.visible = !atmosphereMesh.visible; showMessage(`Atmosphere ${atmosphereMesh.visible ? 'ON' : 'OFF'}.`, "info"); });
+
+            document.getElementById('addRandomMarkerButton').addEventListener('click', addRandomMarker);
+            document.getElementById('resetViewButton').addEventListener('click', resetView);
+            getMarkerInfoButton.addEventListener('click', () => fetchGeoInfoFromGemini(clickedEarthCoords || lastMarkerCoords));
+
+            const panelToggleElements = [togglePanelButton, togglePanelHeader];
+            panelToggleElements.forEach(el => el.addEventListener('click', toggleControlsPanel));
+
+            window.addEventListener('resize', onWindowResize, false);
+            // Globe click listener
+            globeContainer.addEventListener('click', onGlobeClick, false);
+        }
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            if (cloudMesh && cloudMesh.visible) cloudMesh.rotation.y += 0.0003;
+            if (starField) starField.rotation.y -= 0.00005;
+
+            if (atmosphereMesh && atmosphereMesh.material.uniforms.viewVector) {
+                atmosphereMesh.material.uniforms.viewVector.value.copy(camera.position);
+            }
+            renderer.render(scene, camera);
+        }
+
+        // --- Event Handlers ---
+        function onWindowResize() {
+            camera.aspect = globeContainer.clientWidth / globeContainer.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
+        }
+
+        function handleToggleRotation() {
+            controls.autoRotate = !controls.autoRotate;
+            updateRotationButtonText();
+            showMessage(controls.autoRotate ? "Globe rotation resumed." : "Globe rotation paused.", "info");
+        }
+
+        function updateRotationButtonText() {
+            const icon = toggleRotationButton.querySelector('i');
+            if (controls.autoRotate) {
+                toggleRotationButton.innerHTML = '<i class="fas fa-pause"></i>Pause Rotation';
+            } else {
+                toggleRotationButton.innerHTML = '<i class="fas fa-play"></i>Resume Rotation';
+            }
+        }
+
+        function toggleControlsPanel() {
+            const isHidden = controlsContent.classList.toggle('hidden');
+            panelIconMinimize.classList.toggle('hidden', isHidden);
+            panelIconExpand.classList.toggle('hidden', !isHidden);
+            showMessage(isHidden ? "Controls minimized." : "Controls expanded.", "info", 1500);
+        }
+
+        function onGlobeClick(event) {
+            event.preventDefault();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(globe);
+
+            if (intersects.length > 0) {
+                const point = intersects[0].point;
+                const phi = Math.acos(point.y / EARTH_RADIUS);
+                const theta = Math.atan2(point.x, point.z);
+
+                let lat = (Math.PI / 2 - phi) * (180 / Math.PI);
+                let lon = theta * (180 / Math.PI);
+
+                if (lon < -180) lon += 360;
+                if (lon > 180) lon -= 360;
+
+                clickedEarthCoords = { lat: parseFloat(lat.toFixed(4)), lon: parseFloat(lon.toFixed(4)) };
+
+                selectedLatText.textContent = clickedEarthCoords.lat;
+                selectedLonText.textContent = clickedEarthCoords.lon;
+                clickedCoordsDisplay.classList.remove('hidden');
+                getMarkerInfoButton.classList.remove('hidden');
+                getMarkerInfoButton.innerHTML = '<i class="fas fa-info-circle"></i>Get Info (Clicked Spot)';
+
+                addTemporaryMarker(point);
+                showMessage(`Location Clicked: Lat ${clickedEarthCoords.lat}, Lon ${clickedEarthCoords.lon}`, "info");
+            }
+        }
+
+        let tempMarker;
+        function addTemporaryMarker(position) {
+            if (tempMarker) scene.remove(tempMarker);
+            const markerGeometry = new THREE.SphereGeometry(1, 16, 16);
+            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.8 });
+            tempMarker = new THREE.Mesh(markerGeometry, markerMaterial);
+            tempMarker.position.copy(position);
+            scene.add(tempMarker);
+            setTimeout(() => {
+                if (tempMarker) scene.remove(tempMarker);
+                tempMarker = null;
+            }, 5000);
+        }
+
+
+        // --- Custom Functions ---
+        function sphericalToCartesian(radius, lat, lon) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const y = radius * Math.cos(phi);
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+            return new THREE.Vector3(x, y, z);
+        }
+
+        function addRandomMarker() {
+            const markerRadius = 1.2;
+            const markerGeometry = new THREE.SphereGeometry(markerRadius, 24, 24);
+            const markerMaterial = new THREE.MeshPhongMaterial({
+                color: 0xff3333,
+                emissive: 0x660000,
+                shininess: 40,
+                depthTest: false
+            });
+            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+
+            const lat = Math.random() * 180 - 90;
+            const lon = Math.random() * 360 - 180;
+            const position = sphericalToCartesian(EARTH_RADIUS + CLOUD_ALTITUDE + markerRadius, lat, lon);
+            marker.position.copy(position);
+            marker.renderOrder = 1;
+            scene.add(marker);
+
+            lastMarkerCoords = { lat: parseFloat(lat.toFixed(4)), lon: parseFloat(lon.toFixed(4)) };
+            clickedEarthCoords = null;
+
+            clickedCoordsDisplay.classList.add('hidden');
+            getMarkerInfoButton.classList.remove('hidden');
+            getMarkerInfoButton.innerHTML = '<i class="fas fa-info-circle"></i>Get Info (Random Marker)';
+
+            showMessage(`📍 Random Marker Added: Lat ${lastMarkerCoords.lat}, Lon ${lastMarkerCoords.lon}.`, "success");
+        }
+
+        function resetView() {
+            controls.reset();
+            camera.position.copy(initialCameraPosition);
+            controls.target.set(0, 0, 0);
+            controls.update();
+            controls.autoRotate = true;
+            updateRotationButtonText();
+
+            getMarkerInfoButton.classList.add('hidden');
+            geminiInfoPanel.classList.add('hidden');
+            geminiResponseText.textContent = '';
+            lastMarkerCoords = null;
+            clickedEarthCoords = null;
+            clickedCoordsDisplay.classList.add('hidden');
+            if (tempMarker) scene.remove(tempMarker); tempMarker = null;
+            showMessage("🔄 View Reset. Globe rotation enabled.", "info");
+        }
+
+        // --- Gemini API Integration ---
+        async function fetchGeoInfoFromGemini(coordsToFetch) {
+            if (!coordsToFetch) {
+                showMessage("No location selected. Click on the globe or add a random marker.", "warning");
+                return;
+            }
+
+            geminiInfoPanel.classList.remove('hidden');
+            geminiLoadingIndicator.classList.remove('hidden');
+            geminiResponseText.textContent = '';
+            geminiResponseText.classList.add('hidden');
+
+            const prompt = `You are a concise geographical assistant. Given latitude ${coordsToFetch.lat} and longitude ${coordsToFetch.lon}, provide an engaging, brief description (1-2 short paragraphs, max 100 words) of this location. Highlight key geographical features, nearby cities/landmarks, or interesting facts. If oceanic, describe the ocean region. Be informative yet succinct.`;
+
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error (${response.status}): ${errorData?.error?.message || response.statusText}`);
+                }
+                const result = await response.json();
+                if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                    geminiResponseText.textContent = result.candidates[0].content.parts[0].text;
+                    showMessage("Location insights loaded!", "success");
+                } else {
+                    throw new Error("Invalid response structure from Gemini API.");
+                }
+            } catch (error) {
+                console.error("Error fetching data from Gemini:", error);
+                geminiResponseText.textContent = `Error: ${error.message}. Please try again.`;
+                showMessage(`Error fetching insights: ${error.message}`, "error", 5000);
+            } finally {
+                geminiLoadingIndicator.classList.add('hidden');
+                geminiResponseText.classList.remove('hidden');
+            }
+        }
+
+        // --- Utility for Messages ---
+        function showMessage(message, type = "info", duration = 3000) {
+            const messageBox = document.getElementById('customMessageBox');
+            if (!messageBox) return;
+            messageBox.textContent = message;
+
+            messageBox.style.backgroundColor = '#1e293b'; // Default (Slate 800)
+            if (type === "success") messageBox.style.backgroundColor = '#059669'; // Emerald 600
+            else if (type === "error") messageBox.style.backgroundColor = '#be123c';   // Rose 700
+            else if (type === "warning") messageBox.style.backgroundColor = '#d97706'; // Amber 600
+
+            messageBox.classList.add('show');
+            let transformTimeout = setTimeout(() => {
+                messageBox.style.transform = 'translateX(-50%) translateY(0)';
+            }, 50);
+
+            let hideTimeout = setTimeout(() => {
+                messageBox.style.transform = 'translateX(-50%) translateY(120%)';
+                let removeShowTimeout = setTimeout(() => {
+                    messageBox.classList.remove('show');
+                }, 400);
+                messageBox.dataset.removeShowTimeout = removeShowTimeout.toString();
+            }, duration);
+
+            if (messageBox.dataset.transformTimeout) clearTimeout(parseInt(messageBox.dataset.transformTimeout));
+            if (messageBox.dataset.hideTimeout) clearTimeout(parseInt(messageBox.dataset.hideTimeout));
+            if (messageBox.dataset.removeShowTimeout) clearTimeout(parseInt(messageBox.dataset.removeShowTimeout));
+
+            messageBox.dataset.transformTimeout = transformTimeout.toString();
+            messageBox.dataset.hideTimeout = hideTimeout.toString();
+        }
+
+        // --- Start the application ---
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+
+</html>
