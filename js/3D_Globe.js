@@ -118,11 +118,13 @@
 
             textureLoader = new THREE.TextureLoader();
 
-            // Starry Background - Default to solid color
-            const starGeometry = new THREE.SphereGeometry(SUN_DISTANCE * 1.2, 64, 64);
-            const starMaterial = new THREE.MeshBasicMaterial({ color: 0x0A0A1A, side: THREE.BackSide, fog: false, depthWrite: false });
-            starField = new THREE.Mesh(starGeometry, starMaterial);
-            loadOptionalTexture('../Images/Textures/starfield.jpg', 'Starfield', starMaterial);
+// Starry Background - Default to solid color
+const starGeometry = new THREE.SphereGeometry(SUN_DISTANCE * 1.2, 64, 64);
+const starMaterial = new THREE.MeshBasicMaterial({ color: 0x0A0A1A, side: THREE.BackSide, fog: false, depthWrite: false });
+starField = new THREE.Mesh(starGeometry, starMaterial);
+loadOptionalTexture('https://threejs.org/examples/textures/eso_dark.jpg', 'Starfield', starMaterial);
+scene.add(starField);
+
             scene.add(starField);
 
             // Globe - Default to solid color
@@ -133,14 +135,15 @@
                 transparent: false,
                 depthWrite: true
             });
-            loadOptionalTexture('../Images/Textures/earth_atmos_2048.jpg', 'Earth Color Map', globeMaterial, 'map');
-            loadOptionalTexture('../Images/Textures/earth_normal_2048.jpg', 'Earth Bump Map', globeMaterial, 'bumpMap');
-            loadOptionalTexture('../Images/Textures/earth_specular_2048.jpg', 'Earth Specular Map', globeMaterial, 'specularMap');
+loadOptionalTexture('https://threejs.org/examples/textures/earth_atmos_2048.jpg', 'Earth Color Map', globeMaterial, 'map');
+loadOptionalTexture('https://threejs.org/examples/textures/earth_topology_512.jpg', 'Earth Bump Map', globeMaterial, 'bumpMap');
+loadOptionalTexture('https://threejs.org/examples/textures/earth_specular_2048.jpg', 'Earth Specular Map', globeMaterial, 'specularMap');
 
-            globe = new THREE.Mesh(globeGeometry, globeMaterial);
-            globe.receiveShadow = true;
-            globe.castShadow = true;
-            scene.add(globe);
+globe = new THREE.Mesh(globeGeometry, globeMaterial);
+globe.receiveShadow = true;
+globe.castShadow = true;
+scene.add(globe);
+
 
             // Cloud Layer - Default to semi-transparent color
             const cloudGeometry = new THREE.SphereGeometry(EARTH_RADIUS + CLOUD_ALTITUDE, 128, 128);
@@ -151,12 +154,13 @@
                 blending: THREE.NormalBlending,
                 depthWrite: false,
             });
-            loadOptionalTexture('../Images/Textures/earth_clouds_1024.png', 'Clouds', cloudMaterial, 'map', (texture) => {
-                if (texture) {
-                    cloudMaterial.opacity = 0.35;
-                    cloudMaterial.alphaTest = 0.05;
-                }
-            });
+loadOptionalTexture('https://threejs.org/examples/textures/earth_clouds_1024.png', 'Clouds', cloudMaterial, 'map', (texture) => {
+    if (texture) {
+        cloudMaterial.opacity = 0.35;
+        cloudMaterial.alphaTest = 0.05;
+    }
+});
+
             cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
             cloudMesh.receiveShadow = true;
             scene.add(cloudMesh);
