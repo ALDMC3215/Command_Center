@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const addCardOverlay = document.getElementById("addCardOverlay");
   const addCardForm = document.getElementById("addCardForm");
   const cancelAddCard = document.getElementById("cancelAddCard");
+  const projectsBtn = document.getElementById("projectsBtn");
+  const projectsMenu = document.getElementById("projectsMenu");
 
   let allCardsData = []; // برای نگهداری داده‌های اصلی کارت‌ها
   const favorites = new Set(
@@ -113,6 +115,21 @@ document.addEventListener("DOMContentLoaded", () => {
         e.target !== themeToggleButton
       ) {
         themeMenu.classList.remove("show");
+      }
+    });
+  }
+
+  if (projectsBtn && projectsMenu) {
+    projectsBtn.addEventListener("click", () => {
+      projectsBtn.parentElement.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (
+        !projectsBtn.contains(e.target) &&
+        !projectsMenu.contains(e.target)
+      ) {
+        projectsBtn.parentElement.classList.remove("show");
       }
     });
   }

@@ -165,6 +165,59 @@ header.header-scrolled #title {
   color: var(--primary);
 }
 
+.projects-dropdown {
+  position: relative;
+}
+
+.projects-dropdown button {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.projects-dropdown button:hover {
+  color: var(--primary);
+}
+
+.projects-dropdown .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  list-style: none;
+  background: radial-gradient(circle at top left, var(--gradient-start), var(--gradient-end));
+  padding: 8px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.projects-dropdown .dropdown-menu a {
+  display: block;
+  padding: 8px 16px;
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.projects-dropdown .dropdown-menu a:hover {
+  background-color: rgba(var(--primary-rgb, 255, 111, 60), 0.15);
+}
+
+.projects-dropdown.show .dropdown-menu {
+  display: block;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
